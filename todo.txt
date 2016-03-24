@@ -1,0 +1,8 @@
+= ClassProcessor
+
+. Handle static initializers
+
+= AnnotationProcessor
+
+. Handle array values
+

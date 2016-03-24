@@ -1,0 +1,15 @@
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+mainClassName = 'org.kordamp.naum.Main'
+
+dependencies {
+    compile project(':naum-core')
+    compile 'com.beust:jcommander:1.48'
+}
+
+shadowJar {
+    baseName = project.name
+    classifier = ''
+}
+jar.finalizedBy shadowJar

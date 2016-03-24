@@ -1,0 +1,8 @@
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.16.8'
+    
+    compile 'org.ow2.asm:asm-all:5.1'
+
+    testCompile 'javax.inject:javax.inject:1'
+    testCompile 'com.google.code.findbugs:jsr305:3.0.1'
+}
