@@ -19,8 +19,6 @@ import org.junit.Test;
 import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.model.ClassInfo;
 import org.kordamp.naum.model.ConstructorInfo;
-import org.kordamp.naum.model.InnerClassInfo;
-import org.kordamp.naum.model.MethodInfo;
 import org.kordamp.naum.model.Modifiers;
 import org.kordamp.naum.processor.AbstractProcessorTest;
 
@@ -33,6 +31,11 @@ import java.lang.annotation.Target;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
+import static org.kordamp.naum.model.ClassInfo.classInfo;
+import static org.kordamp.naum.model.ConstructorInfo.constructorInfo;
+import static org.kordamp.naum.model.InnerClassInfo.innerClassInfo;
+import static org.kordamp.naum.model.MethodInfo.methodInfo;
 import static org.kordamp.naum.model.Opcodes.ACC_ABSTRACT;
 import static org.kordamp.naum.model.Opcodes.ACC_DEFAULT;
 import static org.kordamp.naum.model.Opcodes.ACC_PUBLIC;
@@ -87,7 +90,7 @@ public class ClassTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckClassWithAnnotation() throws Exception {
         ClassInfo classInfo = classInfoFor("org.kordamp.naum.processor.klass.ClassWithAnnotation");
-        classInfo.addToAnnotations(AnnotationInfo.builder()
+        classInfo.addToAnnotations(annotationInfo()
             .name("javax.inject.Named")
             .build());
         loadAndCheck("org/kordamp/naum/processor/klass/ClassWithAnnotation.class", (klass) -> {
@@ -98,7 +101,7 @@ public class ClassTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckClassWithAnnotationValue() throws Exception {
         ClassInfo classInfo = classInfoFor("org.kordamp.naum.processor.klass.ClassWithAnnotationValue");
-        classInfo.addToAnnotations(AnnotationInfo.builder()
+        classInfo.addToAnnotations(annotationInfo()
             .name("javax.inject.Named")
             .value("value", "value")
             .build());
@@ -110,21 +113,21 @@ public class ClassTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckClassWithInnerClasses() throws Exception {
         ClassInfo classInfo = classInfoFor("org.kordamp.naum.processor.klass.ClassWithInnerClasses");
-        classInfo.addToClasses(InnerClassInfo.builder()
+        classInfo.addToClasses(innerClassInfo()
             .name("org.kordamp.naum.processor.klass.ClassWithInnerClasses$StaticMemberClass")
             .modifiers(ACC_PUBLIC | ACC_STATIC)
             .build());
-        classInfo.addToClasses(InnerClassInfo.builder()
+        classInfo.addToClasses(innerClassInfo()
             .name("org.kordamp.naum.processor.klass.ClassWithInnerClasses$MemberClass")
             .modifiers(ACC_PUBLIC)
             .build());
-        classInfo.addToClasses(InnerClassInfo.builder()
+        classInfo.addToClasses(innerClassInfo()
             .name("org.kordamp.naum.processor.klass.ClassWithInnerClasses$1MethodMemberClass")
             .build());
-        classInfo.addToClasses(InnerClassInfo.builder()
+        classInfo.addToClasses(innerClassInfo()
             .name("org.kordamp.naum.processor.klass.ClassWithInnerClasses$1")
             .build());
-        classInfo.addToMethods(MethodInfo.builder()
+        classInfo.addToMethods(methodInfo()
             .name("method")
             .modifiers(ACC_PUBLIC)
             .build());
@@ -138,15 +141,15 @@ public class ClassTest extends AbstractProcessorTest {
         ClassInfo classInfo = ClassInfo.newInterface()
             .name("org.kordamp.naum.processor.klass.Interface")
             .build();
-        classInfo.addToMethods(MethodInfo.builder()
+        classInfo.addToMethods(methodInfo()
             .name("method")
             .modifiers(ACC_PUBLIC | ACC_ABSTRACT)
             .build());
-        classInfo.addToMethods(MethodInfo.builder()
+        classInfo.addToMethods(methodInfo()
             .name("static_method")
             .modifiers(ACC_PUBLIC | ACC_STATIC)
             .build());
-        classInfo.addToMethods(MethodInfo.builder()
+        classInfo.addToMethods(methodInfo()
             .name("default_method")
             .modifiers(ACC_PUBLIC | ACC_DEFAULT)
             .build());
@@ -161,31 +164,31 @@ public class ClassTest extends AbstractProcessorTest {
         ClassInfo classInfo = classInfoBuilderFor("org.kordamp.naum.processor.klass.ClassWithConstructors")
             .modifiers(ACC_PUBLIC | ACC_SUPER)
             .build();
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .argumentTypes("int")
             .build());
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .argumentTypes("java.util.Map<java.lang.String, java.lang.Object>")
             .build());
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .argumentTypes("boolean")
             .exceptions(new String[]{IllegalArgumentException.class.getName()})
             .build());
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PRIVATE)
             .argumentTypes(Object.class.getName())
             .build());
-        ConstructorInfo constructor = ConstructorInfo.builder()
+        ConstructorInfo constructor = constructorInfo()
             .modifiers(ACC_PRIVATE)
             .argumentTypes("java.lang.Object, java.lang.Object")
             .build();
-        constructor.addToAnnotations(AnnotationInfo.builder()
+        constructor.addToAnnotations(annotationInfo()
             .name(Named.class.getName())
             .build());
         classInfo.addToConstructors(constructor);
@@ -211,24 +214,22 @@ public class ClassTest extends AbstractProcessorTest {
             .name("org.kordamp.naum.processor.klass.AnnotatedAnnotation")
             .iface(Annotation.class.getName())
             .build();
-        classInfo.addToAnnotations(AnnotationInfo.builder()
+        classInfo.addToAnnotations(annotationInfo()
             .name(Retention.class.getName())
             .enumValue("value", new AnnotationInfo.EnumEntry(RetentionPolicy.class.getName(), "SOURCE"))
             .build());
-        classInfo.addToAnnotations(AnnotationInfo.builder()
+        classInfo.addToAnnotations(annotationInfo()
             .name(Target.class.getName())
             //.value("value", new ElementType[]{ElementType.TYPE, ElementType.FIELD})
             .build());
         loadAndCheck("org/kordamp/naum/processor/klass/AnnotatedAnnotation.class", (klass) -> {
-            System.out.println(klass);
-            System.out.println(classInfo);
             assertThat(klass.getContentHash(), equalTo(classInfo.getContentHash()));
             assertThat(klass, equalTo(classInfo));
         });
     }
 
     private static ClassInfo.ClassInfoBuilder classInfoBuilderFor(String className) {
-        return ClassInfo.builder()
+        return classInfo()
             .name(className)
             .superclass(Object.class.getName())
             .version(V1_8)
@@ -237,7 +238,7 @@ public class ClassTest extends AbstractProcessorTest {
 
     private static ClassInfo classInfoFor(String className) {
         ClassInfo classInfo = classInfoBuilderFor(className).build();
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());
         return classInfo;
@@ -247,7 +248,7 @@ public class ClassTest extends AbstractProcessorTest {
         ClassInfo classInfo = classInfoBuilderFor(className)
             .interfaces(interfaces)
             .build();
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());
         return classInfo;
@@ -257,7 +258,7 @@ public class ClassTest extends AbstractProcessorTest {
         ClassInfo classInfo = classInfoBuilderFor(className)
             .superclass(superclass)
             .build();
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());
         return classInfo;
@@ -268,7 +269,7 @@ public class ClassTest extends AbstractProcessorTest {
             .superclass(superclass)
             .interfaces(interfaces)
             .build();
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());
         return classInfo;
@@ -278,7 +279,7 @@ public class ClassTest extends AbstractProcessorTest {
         ClassInfo classInfo = classInfoBuilderFor(className)
             .typeParameters(formalParameters)
             .build();
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());
         return classInfo;

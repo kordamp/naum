@@ -89,7 +89,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
     private void checkVersion(Collection<Diff> list) {
         if (previous.getVersion() != next.getVersion()) {
             list.add(
-                Diff.builder()
+                Diff.diff()
                     .severity(Diff.Severity.WARNING)
                     .type(Diff.Type.MODIFIED)
                     .messageKey(KEY_CLASS_VERSION_MODIFIED)
@@ -103,7 +103,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
     private void checkSuperclass(Collection<Diff> list) {
         if (!previous.getSuperclass().equals(next.getSuperclass())) {
             list.add(
-                Diff.builder()
+                Diff.diff()
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.MODIFIED)
                     .messageKey(KEY_CLASS_SUPERCLASS_MODIFIED)
@@ -132,7 +132,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
             // anything left in p was removed
             for (String i : p) {
                 list.add(
-                    Diff.builder()
+                    Diff.diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.REMOVED)
                         .messageKey(KEY_CLASS_INTERFACE_REMOVED)
@@ -143,7 +143,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
             // anything left in n was added
             for (String i : n) {
                 list.add(
-                    Diff.builder()
+                    Diff.diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.ADDED)
                         .messageKey(KEY_CLASS_INTERFACE_ADDED)
@@ -185,7 +185,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
         // anything left in p was removed
         for (InnerClassInfo c : p.values()) {
             list.add(
-                Diff.builder()
+                Diff.diff()
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.REMOVED)
                     .messageKey(KEY_CLASS_INNERCLASS_REMOVED)
@@ -196,7 +196,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
         // anything left in n was added
         for (InnerClassInfo c : n.values()) {
             list.add(
-                Diff.builder()
+                Diff.diff()
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.ADDED)
                     .messageKey(KEY_CLASS_INNERCLASS_ADDED)

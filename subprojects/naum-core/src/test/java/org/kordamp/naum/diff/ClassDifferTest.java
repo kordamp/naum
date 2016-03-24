@@ -37,6 +37,8 @@ import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_MODIFIERS_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_SUPERCLASS_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_VERSION_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.classDiffer;
+import static org.kordamp.naum.diff.Diff.diff;
+import static org.kordamp.naum.model.ClassInfo.classInfo;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.V1_7;
@@ -68,16 +70,16 @@ public class ClassDifferTest {
         return new Object[]{
             new Object[]{
                 "version",
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .version(V1_7)
                     .build(),
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .version(V1_8)
                     .build(),
                 asList(
-                    Diff.builder()
+                    diff()
                         .severity(Diff.Severity.WARNING)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_CLASS_VERSION_MODIFIED)
@@ -90,15 +92,15 @@ public class ClassDifferTest {
 
             new Object[]{
                 "superclass",
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .build(),
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .superclass(SUPER_CLASSNAME)
                     .build(),
                 asList(
-                    Diff.builder()
+                    diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_CLASS_SUPERCLASS_MODIFIED)
@@ -111,16 +113,16 @@ public class ClassDifferTest {
 
             new Object[]{
                 "modifiers",
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .modifiers(ACC_PUBLIC)
                     .build(),
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .modifiers(ACC_PRIVATE)
                     .build(),
                 asList(
-                    Diff.builder()
+                    diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_CLASS_MODIFIERS_MODIFIED)
@@ -135,15 +137,15 @@ public class ClassDifferTest {
 
             new Object[]{
                 "interfaces - removed",
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .iface(JAVA_IO_SERIALIZABLE)
                     .build(),
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .build(),
                 asList(
-                    Diff.builder()
+                    diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.REMOVED)
                         .messageKey(KEY_CLASS_INTERFACE_REMOVED)
@@ -155,15 +157,15 @@ public class ClassDifferTest {
 
             new Object[]{
                 "interfaces - added",
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .build(),
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .iface(JAVA_IO_SERIALIZABLE)
                     .build(),
                 asList(
-                    Diff.builder()
+                    diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.ADDED)
                         .messageKey(KEY_CLASS_INTERFACE_ADDED)
@@ -175,25 +177,25 @@ public class ClassDifferTest {
 
             new Object[]{
                 "interfaces - mixed",
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .iface(JAVA_IO_SERIALIZABLE)
                     .iface(JAVA_IO_CLONEABLE)
                     .build(),
-                ClassInfo.builder()
+                classInfo()
                     .name(CLASSNAME)
                     .iface(JAVA_IO_SERIALIZABLE)
                     .iface(JAVA_IO_CLOSEABLE)
                     .build(),
                 asList(
-                    Diff.builder()
+                    diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.REMOVED)
                         .messageKey(KEY_CLASS_INTERFACE_REMOVED)
                         .messageArg(CLASSNAME)
                         .messageArg(JAVA_IO_CLONEABLE)
                         .build(),
-                    Diff.builder()
+                    diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.ADDED)
                         .messageKey(KEY_CLASS_INTERFACE_ADDED)

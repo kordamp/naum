@@ -75,7 +75,7 @@ public class ConstructorDiffer extends AbstractMemberDiffer<ConstructorInfo> {
             // anything left in p was removed
             for (String e : p) {
                 list.add(
-                    Diff.builder()
+                    Diff.diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.REMOVED)
                         .messageKey("constructor.exception.removed")
@@ -85,7 +85,7 @@ public class ConstructorDiffer extends AbstractMemberDiffer<ConstructorInfo> {
             // anything left in n was added
             for (String e : n) {
                 list.add(
-                    Diff.builder()
+                    Diff.diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.ADDED)
                         .messageKey("constructor.exception.added")

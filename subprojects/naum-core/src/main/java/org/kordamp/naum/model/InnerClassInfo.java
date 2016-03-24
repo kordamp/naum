@@ -20,6 +20,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Andres Almiray
  */
@@ -31,8 +33,8 @@ public class InnerClassInfo extends MemberInfo {
         super(name, modifiers);
     }
 
-    @Builder
-    public static InnerClassInfo create(String name, int modifiers) {
+    @Builder(builderMethodName = "innerClassInfo")
+    public static InnerClassInfo create(@Nonnull String name, int modifiers) {
         return new InnerClassInfo(name.replace('/', '.'), modifiers);
     }
 

@@ -20,6 +20,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Modifier;
 
 import static org.kordamp.naum.model.Modifiers.isFinal;
@@ -41,8 +43,8 @@ public class FieldInfo extends MemberInfo {
         this.value = value;
     }
 
-    @Builder
-    public static FieldInfo create(String name, int modifiers, String type, Object value) {
+    @Builder(builderMethodName = "fieldInfo")
+    public static FieldInfo create(@Nonnull String name, int modifiers, @Nonnull String type, @Nullable Object value) {
         value = Modifier.isStatic(modifiers) && Modifier.isFinal(modifiers) ? value : null;
         return new FieldInfo(name, modifiers, type, value);
     }

@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -38,8 +39,8 @@ public class ConstructorInfo extends MemberInfo {
         this.exceptions = exceptions;
     }
 
-    @Builder
-    public static ConstructorInfo create(int modifiers, String argumentTypes, String[] exceptions) {
+    @Builder(builderMethodName = "constructorInfo")
+    public static ConstructorInfo create(int modifiers, String argumentTypes, @Nonnull String[] exceptions) {
         String[] values = exceptions != null ? exceptions : EMPTY;
         for (int i = 0; i < values.length; i++) {
             values[i] = values[i].replace('/', '.');

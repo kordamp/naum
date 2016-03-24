@@ -38,7 +38,7 @@ public class FieldProcessor extends FieldVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        AnnotationInfo annotation = AnnotationInfo.builder()
+        AnnotationInfo annotation = AnnotationInfo.annotationInfo()
             .name(desc)
             .build();
         field.addToAnnotations(annotation);

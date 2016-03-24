@@ -33,7 +33,6 @@ public abstract class MemberInfo extends AnnotatedInfo {
         this.modifiers = modifiers;
     }
 
-
     public static boolean isInnerClass(MemberInfo member) {
         return member.getName().contains("$");
     }

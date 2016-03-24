@@ -38,7 +38,7 @@ public class MethodProcessor extends MethodVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        AnnotationInfo annotation = AnnotationInfo.builder()
+        AnnotationInfo annotation = AnnotationInfo.annotationInfo()
             .name(desc)
             .build();
         method.addToAnnotations(annotation);

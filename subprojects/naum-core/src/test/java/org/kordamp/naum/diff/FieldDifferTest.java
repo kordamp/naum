@@ -20,7 +20,6 @@ import junitparams.Parameters;
 import junitparams.naming.TestCaseName;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kordamp.naum.model.ClassInfo;
 import org.kordamp.naum.model.FieldInfo;
 
 import java.util.Collection;
@@ -30,10 +29,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_SUPERCLASS_MODIFIED;
+import static org.kordamp.naum.diff.Diff.diff;
 import static org.kordamp.naum.diff.FieldDiffer.KEY_FIELD_MODIFIERS_MODIFIED;
 import static org.kordamp.naum.diff.FieldDiffer.KEY_FIELD_TYPE_MODIFIED;
 import static org.kordamp.naum.diff.FieldDiffer.fieldDiffer;
+import static org.kordamp.naum.model.FieldInfo.fieldInfo;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
@@ -60,18 +60,18 @@ public class FieldDifferTest {
         return new Object[]{
             new Object[]{
                 "modifiers",
-                FieldInfo.builder()
+                fieldInfo()
                     .name(FIELDNAME)
                     .modifiers(ACC_PUBLIC)
                     .type(JAVA_LANG_OBJECT)
                     .build(),
-                FieldInfo.builder()
+                fieldInfo()
                     .name(FIELDNAME)
                     .modifiers(ACC_PRIVATE)
                     .type(JAVA_LANG_OBJECT)
                     .build(),
                 asList(
-                    Diff.builder()
+                    diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_FIELD_MODIFIERS_MODIFIED)
@@ -86,16 +86,16 @@ public class FieldDifferTest {
 
             new Object[]{
                 "type",
-                FieldInfo.builder()
+                fieldInfo()
                     .name(FIELDNAME)
                     .type(JAVA_LANG_OBJECT)
                     .build(),
-                FieldInfo.builder()
+                fieldInfo()
                     .name(FIELDNAME)
                     .type(JAVA_LANG_INTEGER)
                     .build(),
                 asList(
-                    Diff.builder()
+                    diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_FIELD_TYPE_MODIFIED)

@@ -43,7 +43,7 @@ public abstract class AbstractMemberDiffer<T extends MemberInfo> extends Abstrac
     protected <M extends MemberInfo> void checkModifiers(M previous, M next, Collection<Diff> list, String keyPrefix) {
         if (getPrevious().getModifiers() != getNext().getModifiers()) {
             list.add(
-                Diff.builder()
+                Diff.diff()
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.MODIFIED)
                     .messageKey(keyPrefix + ".modifiers.modified")

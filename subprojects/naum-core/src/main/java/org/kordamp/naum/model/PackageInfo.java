@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,8 +38,8 @@ public class PackageInfo extends AnnotatedInfo {
         super(name);
     }
 
-    @Builder
-    public static PackageInfo create(String name) {
+    @Builder(builderMethodName = "packageInfo")
+    public static PackageInfo create(@Nonnull String name) {
         return new PackageInfo(name.replace('/', '.'));
     }
 

@@ -19,6 +19,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +46,8 @@ public class Diff {
     private final String messageKey;
     private final List<Object> messageArgs = new ArrayList<>();
 
-    @Builder
-    public static Diff create(Severity severity, Type type, String messageKey, @Singular List<Object> messageArgs) {
+    @Builder(builderMethodName = "diff")
+    public static Diff create(@Nonnull Severity severity, @Nonnull Type type, @Nonnull String messageKey, @Nullable @Singular List<Object> messageArgs) {
         Diff diff = new Diff(severity, type, messageKey);
         if (messageArgs != null) {
             diff.getMessageArgs().addAll(messageArgs);

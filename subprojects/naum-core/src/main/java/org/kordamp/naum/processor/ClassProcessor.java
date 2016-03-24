@@ -78,7 +78,7 @@ public class ClassProcessor extends ClassVisitor {
             ifaces = interfaceTypes.toArray(new String[interfaceTypes.size()]);
         }
 
-        ClassInfo klass = ClassInfo.builder()
+        ClassInfo klass = ClassInfo.classInfo()
             .name(name)
             .version(version)
             .typeParameters(formalParameters)
@@ -105,7 +105,7 @@ public class ClassProcessor extends ClassVisitor {
             return;
         }
 
-        classStack.peek().addToClasses(InnerClassInfo.builder()
+        classStack.peek().addToClasses(InnerClassInfo.innerClassInfo()
             .name(name)
             .modifiers(access)
             .build());
@@ -134,7 +134,7 @@ public class ClassProcessor extends ClassVisitor {
         matcher.matches();
 
         if (CONSTRUCTOR_NAME.equals(name)) {
-            ConstructorInfo constructor = ConstructorInfo.builder()
+            ConstructorInfo constructor = ConstructorInfo.constructorInfo()
                 .modifiers(access)
                 .argumentTypes(matcher.group(2))
                 .exceptions(exceptions)
@@ -149,7 +149,7 @@ public class ClassProcessor extends ClassVisitor {
             access = access | Opcodes.ACC_DEFAULT;
         }
 
-        MethodInfo method = MethodInfo.builder()
+        MethodInfo method = MethodInfo.methodInfo()
             .name(name)
             .modifiers(access)
             .genericTypes(matcher.group(1))
@@ -168,7 +168,7 @@ public class ClassProcessor extends ClassVisitor {
         CustomTraceSignatureVisitor sv = new CustomTraceSignatureVisitor(Opcodes.ACC_PUBLIC);
         r.accept(sv);
 
-        FieldInfo field = FieldInfo.builder()
+        FieldInfo field = FieldInfo.fieldInfo()
             .name(name)
             .modifiers(access)
             .type(sv.getTypeOrSuperclass())
@@ -180,7 +180,7 @@ public class ClassProcessor extends ClassVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        AnnotationInfo annotation = AnnotationInfo.builder()
+        AnnotationInfo annotation = AnnotationInfo.annotationInfo()
             .name(desc)
             .build();
         classStack.peek().addToAnnotations(annotation);

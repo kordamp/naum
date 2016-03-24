@@ -60,7 +60,7 @@ public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
     private void checkType(List<Diff> list) {
         if (!previous.getType().equals(next.getType())) {
             list.add(
-                Diff.builder()
+                Diff.diff()
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.MODIFIED)
                     .messageKey(KEY_FIELD_TYPE_MODIFIED)

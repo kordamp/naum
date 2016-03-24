@@ -50,7 +50,7 @@ public abstract class AbstractDiffer<T extends AnnotatedInfo> implements Differ<
         // anything left in p was removed
         for (AnnotationInfo a : p.values()) {
             list.add(
-                Diff.builder()
+                Diff.diff()
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.REMOVED)
                     .messageKey("class.annotation.removed")
@@ -60,7 +60,7 @@ public abstract class AbstractDiffer<T extends AnnotatedInfo> implements Differ<
         // anything left in n was added
         for (AnnotationInfo a : n.values()) {
             list.add(
-                Diff.builder()
+                Diff.diff()
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.ADDED)
                     .messageKey("class.annotation.added")

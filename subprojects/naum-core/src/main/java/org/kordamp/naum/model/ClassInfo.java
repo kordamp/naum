@@ -21,6 +21,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,8 +60,8 @@ public class ClassInfo extends MemberInfo {
         this.interfaces = interfaces;
     }
 
-    @Builder
-    public static ClassInfo create(String name, int version, int modifiers, String typeParameters, String superclass, @Singular List<String> ifaces, String[] interfaces) {
+    @Builder(builderMethodName = "classInfo")
+    public static ClassInfo create(@Nonnull String name, int version, int modifiers, String typeParameters, @Nonnull String superclass, @Nonnull @Singular List<String> ifaces, @Nonnull String[] interfaces) {
         version = version == 0 ? V1_8 : version;
         typeParameters = typeParameters == null ? "" : typeParameters;
         superclass = superclass == null ? "java.lang.Object" : superclass;
@@ -87,7 +88,7 @@ public class ClassInfo extends MemberInfo {
     }
 
     public static ClassInfoBuilder newInterface(int visibilityAcces) {
-        return ClassInfo.builder()
+        return ClassInfo.classInfo()
             .modifiers(visibilityAcces | ACC_INTERFACE | ACC_ABSTRACT);
     }
 
@@ -96,7 +97,7 @@ public class ClassInfo extends MemberInfo {
     }
 
     public static ClassInfoBuilder newAnnotation(int visibilityAcces) {
-        return ClassInfo.builder()
+        return ClassInfo.classInfo()
             .modifiers(visibilityAcces | ACC_INTERFACE | ACC_ABSTRACT | ACC_ANNOTATION);
     }
 

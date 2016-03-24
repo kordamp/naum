@@ -65,7 +65,7 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
     private void checkReturnType(List<Diff> list) {
         if (!previous.getReturnType().equals(next.getReturnType())) {
             list.add(
-                Diff.builder()
+                Diff.diff()
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.MODIFIED)
                     .messageKey("method.type.modified")
@@ -94,7 +94,7 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
             // anything left in p was removed
             for (String e : p) {
                 list.add(
-                    Diff.builder()
+                    Diff.diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.REMOVED)
                         .messageKey("method.exception.removed")
@@ -105,7 +105,7 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
             // anything left in n was added
             for (String e : n) {
                 list.add(
-                    Diff.builder()
+                    Diff.diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.ADDED)
                         .messageKey("method.exception.added")

@@ -16,9 +16,7 @@
 package org.kordamp.naum.processor.field;
 
 import org.junit.Test;
-import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.model.ClassInfo;
-import org.kordamp.naum.model.ConstructorInfo;
 import org.kordamp.naum.model.FieldInfo;
 import org.kordamp.naum.model.Opcodes;
 import org.kordamp.naum.processor.AbstractProcessorTest;
@@ -28,6 +26,10 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
+import static org.kordamp.naum.model.ClassInfo.classInfo;
+import static org.kordamp.naum.model.ConstructorInfo.constructorInfo;
+import static org.kordamp.naum.model.FieldInfo.fieldInfo;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PROTECTED;
@@ -95,22 +97,22 @@ public class FieldsTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckFieldsWithGenerics() throws Exception {
         List<FieldInfo> fields = new ArrayList<>();
-        fields.add(FieldInfo.builder()
+        fields.add(fieldInfo()
             .name("fieldWithGenericType")
             .type("A")
             .modifiers(ACC_PUBLIC)
             .build());
-        fields.add(FieldInfo.builder()
+        fields.add(fieldInfo()
             .name("fieldWithWildcards")
             .type("java.util.Map<?, ?>")
             .modifiers(ACC_PUBLIC)
             .build());
-        fields.add(FieldInfo.builder()
+        fields.add(fieldInfo()
             .name("fieldWithGenericTypes")
             .type("java.util.Map<java.lang.String, java.lang.Number>")
             .modifiers(ACC_PUBLIC)
             .build());
-        fields.add(FieldInfo.builder()
+        fields.add(fieldInfo()
             .name("fieldWithBoundTypes")
             .type("java.util.Map<? extends java.lang.String, ? extends java.lang.Number>")
             .modifiers(ACC_PUBLIC)
@@ -119,7 +121,7 @@ public class FieldsTest extends AbstractProcessorTest {
         ClassInfo classInfo = classInfoBuilderFor("org.kordamp.naum.processor.field.FieldsWithGenerics")
             .typeParameters("<A extends java.lang.Number>")
             .build();
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());
         for (FieldInfo field : fields) {
@@ -134,28 +136,28 @@ public class FieldsTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckFieldsWithAnnotations() throws Exception {
         List<FieldInfo> fields = new ArrayList<>();
-        FieldInfo field = FieldInfo.builder()
+        FieldInfo field = fieldInfo()
             .name("field")
             .type("int")
             .modifiers(ACC_PUBLIC)
             .build();
-        field.addToAnnotations(AnnotationInfo.builder()
+        field.addToAnnotations(annotationInfo()
             .name("javax.inject.Named")
             .build());
         fields.add(field);
-        field = FieldInfo.builder()
+        field = fieldInfo()
             .name("field_value")
             .type("int")
             .modifiers(ACC_PUBLIC)
             .build();
-        field.addToAnnotations(AnnotationInfo.builder()
+        field.addToAnnotations(annotationInfo()
             .name("javax.inject.Named")
             .value("value", "value")
             .build());
         fields.add(field);
 
         ClassInfo classInfo = classInfoBuilderFor("org.kordamp.naum.processor.field.FieldsWithAnnotations").build();
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());
         for (FieldInfo f : fields) {
@@ -168,7 +170,7 @@ public class FieldsTest extends AbstractProcessorTest {
     }
 
     private static ClassInfo.ClassInfoBuilder classInfoBuilderFor(String className) {
-        return ClassInfo.builder()
+        return classInfo()
             .name(className)
             .superclass(Object.class.getName())
             .version(Opcodes.V1_8)
@@ -177,7 +179,7 @@ public class FieldsTest extends AbstractProcessorTest {
 
     private static ClassInfo classInfoFor(String className, List<FieldInfo> fields) {
         ClassInfo classInfo = classInfoBuilderFor(className).build();
-        classInfo.addToConstructors(ConstructorInfo.builder()
+        classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());
         for (FieldInfo field : fields) {
@@ -188,27 +190,27 @@ public class FieldsTest extends AbstractProcessorTest {
 
     private static List<FieldInfo> fields(Class<?> type, int modifiers) {
         List<FieldInfo> fields = new ArrayList<>();
-        fields.add(FieldInfo.builder()
+        fields.add(fieldInfo()
             .name("field")
-            .type(type.getName().toString())
+            .type(type.getName())
             .modifiers(modifiers)
             .value(type.isPrimitive() ? 42 : null)
             .build());
-        fields.add(FieldInfo.builder()
+        fields.add(fieldInfo()
             .name("final_field")
-            .type(type.getName().toString())
+            .type(type.getName())
             .modifiers(modifiers | ACC_FINAL)
             .value(type.isPrimitive() ? 42 : null)
             .build());
-        fields.add(FieldInfo.builder()
+        fields.add(fieldInfo()
             .name("static_field")
-            .type(type.getName().toString())
+            .type(type.getName())
             .modifiers(modifiers | ACC_STATIC)
             .value(type.isPrimitive() ? 42 : null)
             .build());
-        fields.add(FieldInfo.builder()
+        fields.add(fieldInfo()
             .name("static_final_field")
-            .type(type.getName().toString())
+            .type(type.getName())
             .modifiers(modifiers | ACC_STATIC | ACC_FINAL)
             .value(type.isPrimitive() ? 42 : null)
             .build());

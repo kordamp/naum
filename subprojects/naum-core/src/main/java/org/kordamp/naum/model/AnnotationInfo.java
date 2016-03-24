@@ -21,6 +21,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -38,8 +39,8 @@ public class AnnotationInfo extends AnnotatedInfo {
         super(name);
     }
 
-    @Builder
-    public static AnnotationInfo create(String name, @Singular Map<String, Object> values, @Singular Map<String, EnumEntry> enumValues) {
+    @Builder(builderMethodName = "annotationInfo")
+    public static AnnotationInfo create(@Nonnull String name, @Nonnull @Singular Map<String, Object> values, @Nonnull @Singular Map<String, EnumEntry> enumValues) {
         if (name.startsWith("L") && name.endsWith(";")) {
             name = name.substring(1, name.length() - 1);
         }
