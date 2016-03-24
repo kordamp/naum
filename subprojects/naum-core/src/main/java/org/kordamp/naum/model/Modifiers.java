@@ -112,4 +112,54 @@ public final class Modifiers {
     public static boolean isVolatile(int modifiers) {
         return (modifiers & ACC_VOLATILE) == ACC_VOLATILE;
     }
+
+    public static String modifiersAsString(int modifiers) {
+        StringBuilder b = new StringBuilder();
+
+        if (isPublic(modifiers)) {
+            b.append("public ");
+        } else if (isProtected(modifiers)) {
+            b.append("protected ");
+        } else if (isPrivate(modifiers)) {
+            b.append("private ");
+        }
+
+        if (isStatic(modifiers)) {
+            b.append("static ");
+        }
+        if (isFinal(modifiers)) {
+            b.append("final ");
+        }
+
+        if (isEnum(modifiers)) {
+            b.append("enum ");
+        } else if (isAnnotation(modifiers)) {
+            b.append("@interface ");
+        } else if (isInterface(modifiers)) {
+            b.append("interface ");
+        } else if (isAbstract(modifiers)) {
+            b.append("abstract ");
+        }
+
+        if (isDefault(modifiers)) {
+            b.append("default ");
+        }
+        if (isVolatile(modifiers)) {
+            b.append("volatile ");
+        }
+        if (isTransient(modifiers)) {
+            b.append("transient ");
+        }
+        if (isSynchronized(modifiers)) {
+            b.append("synchronized ");
+        }
+        if (isStrict(modifiers)) {
+            b.append("strict ");
+        }
+        if (isNative(modifiers)) {
+            b.append("native ");
+        }
+
+        return b.toString().trim();
+    }
 }

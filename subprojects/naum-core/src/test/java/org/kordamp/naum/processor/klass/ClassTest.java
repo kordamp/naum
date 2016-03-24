@@ -33,7 +33,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
 import static org.kordamp.naum.model.ClassInfo.classInfo;
+import static org.kordamp.naum.model.ClassInfo.newEnum;
+import static org.kordamp.naum.model.ClassInfo.newInterface;
 import static org.kordamp.naum.model.ConstructorInfo.constructorInfo;
+import static org.kordamp.naum.model.FieldInfo.fieldInfo;
 import static org.kordamp.naum.model.InnerClassInfo.innerClassInfo;
 import static org.kordamp.naum.model.MethodInfo.methodInfo;
 import static org.kordamp.naum.model.Opcodes.ACC_ABSTRACT;
@@ -42,6 +45,8 @@ import static org.kordamp.naum.model.Opcodes.ACC_PUBLIC;
 import static org.kordamp.naum.model.Opcodes.ACC_STATIC;
 import static org.kordamp.naum.model.Opcodes.ACC_SUPER;
 import static org.kordamp.naum.model.Opcodes.V1_8;
+import static org.objectweb.asm.Opcodes.ACC_ENUM;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 
 public class ClassTest extends AbstractProcessorTest {
@@ -138,7 +143,7 @@ public class ClassTest extends AbstractProcessorTest {
 
     @Test
     public void loadAndCheckInterface() throws Exception {
-        ClassInfo classInfo = ClassInfo.newInterface()
+        ClassInfo classInfo = newInterface()
             .name("org.kordamp.naum.processor.klass.Interface")
             .build();
         classInfo.addToMethods(methodInfo()
@@ -154,7 +159,7 @@ public class ClassTest extends AbstractProcessorTest {
             .modifiers(ACC_PUBLIC | ACC_DEFAULT)
             .build());
         loadAndCheck("org/kordamp/naum/processor/klass/Interface.class", (klass) -> {
-            assertTrue("Class " + klass.getName() + " should be an interface", Modifiers.isInterface(klass.getModifiers()));
+            assertTrue("Class " + klass.getName() + " should be an interface", klass.isInterface());
             assertThat(klass, equalTo(classInfo));
         });
     }
@@ -228,12 +233,50 @@ public class ClassTest extends AbstractProcessorTest {
         });
     }
 
+    @Test
+    public void loadAndCheckPlainEnum() throws Exception {
+        loadAndCheck("org/kordamp/naum/processor/klass/PlainEnum.class", (klass) -> {
+            klass.getFields().forEach(f -> System.out.println(Modifiers.modifiersAsString(f.getModifiers())));
+            assertThat(klass, equalTo(enumFor("org.kordamp.naum.processor.klass.PlainEnum", "ONE", "TWO")));
+        });
+    }
+
     private static ClassInfo.ClassInfoBuilder classInfoBuilderFor(String className) {
         return classInfo()
             .name(className)
             .superclass(Object.class.getName())
             .version(V1_8)
             .modifiers(ACC_PUBLIC | ACC_SUPER);
+    }
+
+    private static ClassInfo enumFor(String className, String... fieldNames) {
+        ClassInfo classInfo = newEnum()
+            .name(className)
+            .build();
+        classInfo.addToConstructors(constructorInfo()
+            .modifiers(ACC_PRIVATE)
+            .build());
+        for (String fieldName : fieldNames) {
+            classInfo.addToFields(
+                fieldInfo()
+                    .name(fieldName)
+                    .type(className)
+                    .modifiers(ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_ENUM)
+                    .build()
+            );
+        }
+        classInfo.addToMethods(methodInfo()
+            .name("valueOf")
+            .modifiers(ACC_PUBLIC | ACC_STATIC)
+            .returnType(className)
+            .argumentTypes("java.lang.String")
+            .build());
+        classInfo.addToMethods(methodInfo()
+            .name("values")
+            .modifiers(ACC_PUBLIC | ACC_STATIC)
+            .returnType(className + "[]")
+            .build());
+        return classInfo;
     }
 
     private static ClassInfo classInfoFor(String className) {

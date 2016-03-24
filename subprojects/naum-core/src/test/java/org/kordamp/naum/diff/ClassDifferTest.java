@@ -35,10 +35,12 @@ import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_INTERFACE_ADDED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_INTERFACE_REMOVED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_MODIFIERS_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_SUPERCLASS_MODIFIED;
+import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_TYPE_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_VERSION_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.classDiffer;
 import static org.kordamp.naum.diff.Diff.diff;
 import static org.kordamp.naum.model.ClassInfo.classInfo;
+import static org.kordamp.naum.model.ClassInfo.newInterface;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.V1_7;
@@ -68,6 +70,27 @@ public class ClassDifferTest {
 
     private Object[] classStructure() {
         return new Object[]{
+            new Object[]{
+                "type",
+                newInterface()
+                    .name(CLASSNAME)
+                    .build(),
+                ClassInfo.newAnnotation()
+                    .name(CLASSNAME)
+                    .build(),
+                asList(
+                    diff()
+                        .severity(Diff.Severity.ERROR)
+                        .type(Diff.Type.MODIFIED)
+                        .messageKey(KEY_CLASS_TYPE_MODIFIED)
+                        .messageArg(CLASSNAME)
+                        .messageArg("interface")
+                        .messageArg("annotation")
+                        .build()
+                )
+            },
+
+            /*
             new Object[]{
                 "version",
                 classInfo()
@@ -204,6 +227,7 @@ public class ClassDifferTest {
                         .build()
                 )
             }
+            */
         };
     }
 }

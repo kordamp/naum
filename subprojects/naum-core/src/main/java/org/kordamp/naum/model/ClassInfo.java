@@ -27,12 +27,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.kordamp.naum.model.Modifiers.isEnum;
 import static org.kordamp.naum.model.Opcodes.ACC_ABSTRACT;
 import static org.kordamp.naum.model.Opcodes.ACC_ANNOTATION;
 import static org.kordamp.naum.model.Opcodes.ACC_INTERFACE;
 import static org.kordamp.naum.model.Opcodes.ACC_PUBLIC;
 import static org.kordamp.naum.model.Opcodes.V1_8;
+import static org.objectweb.asm.Opcodes.ACC_ENUM;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
+import static org.objectweb.asm.Opcodes.ACC_SYNCHRONIZED;
 
 /**
  * @author Andres Almiray
@@ -51,13 +53,22 @@ public class ClassInfo extends MemberInfo {
     private final List<ConstructorInfo> constructors = new ArrayList<>();
     private final List<MethodInfo> methods = new ArrayList<>();
     private final List<InnerClassInfo> classes = new ArrayList<>();
+    private final Type type;
 
-    private ClassInfo(String name, int version, int modifiers, String typeParameters, String superclass, String[] interfaces) {
+    public enum Type {
+        CLASS,
+        INTERFACE,
+        ENUM,
+        ANNOTATION;
+    }
+
+    private ClassInfo(String name, Type type, int version, int modifiers, String typeParameters, String superclass, String[] interfaces) {
         super(name, modifiers);
         this.version = version;
         this.typeParameters = typeParameters;
         this.superclass = superclass;
         this.interfaces = interfaces;
+        this.type = type;
     }
 
     @Builder(builderMethodName = "classInfo")
@@ -80,30 +91,68 @@ public class ClassInfo extends MemberInfo {
         }
         Arrays.sort(array);
 
-        return new ClassInfo(name.replace('/', '.'), version, modifiers, typeParameters, superclass.replace('/', '.'), array);
+        Type type = Type.CLASS;
+        if (Modifiers.isEnum(modifiers)) {
+            type = Type.ENUM;
+            modifiers = modifiers - (ACC_ENUM + ACC_FINAL + ACC_SYNCHRONIZED);
+        } else if (Modifiers.isAnnotation(modifiers)) {
+            type = Type.ANNOTATION;
+            modifiers = modifiers - (ACC_INTERFACE + ACC_ABSTRACT + ACC_ANNOTATION);
+        } else if (Modifiers.isInterface(modifiers)) {
+            type = Type.INTERFACE;
+            modifiers = modifiers - (ACC_INTERFACE + ACC_ABSTRACT);
+        }
+
+        return new ClassInfo(name.replace('/', '.'), type, version, modifiers, typeParameters, superclass.replace('/', '.'), array);
+    }
+
+    public boolean isClass() {
+        return type == Type.CLASS;
+    }
+
+    public boolean isInterface() {
+        return type == Type.INTERFACE;
+    }
+
+    public boolean isEnum() {
+        return type == Type.ENUM;
+    }
+
+    public boolean isAnnotation() {
+        return type == Type.ANNOTATION;
     }
 
     public static ClassInfoBuilder newInterface() {
         return newInterface(ACC_PUBLIC);
     }
 
-    public static ClassInfoBuilder newInterface(int visibilityAcces) {
+    public static ClassInfoBuilder newInterface(int visibilityAccess) {
         return ClassInfo.classInfo()
-            .modifiers(visibilityAcces | ACC_INTERFACE | ACC_ABSTRACT);
+            .modifiers(visibilityAccess | ACC_INTERFACE | ACC_ABSTRACT);
     }
 
     public static ClassInfoBuilder newAnnotation() {
         return newAnnotation(ACC_PUBLIC);
     }
 
-    public static ClassInfoBuilder newAnnotation(int visibilityAcces) {
+    public static ClassInfoBuilder newAnnotation(int visibilityAccess) {
         return ClassInfo.classInfo()
-            .modifiers(visibilityAcces | ACC_INTERFACE | ACC_ABSTRACT | ACC_ANNOTATION);
+            .modifiers(visibilityAccess | ACC_INTERFACE | ACC_ABSTRACT | ACC_ANNOTATION);
+    }
+
+    public static ClassInfoBuilder newEnum() {
+        return newEnum(ACC_PUBLIC);
+    }
+
+    public static ClassInfoBuilder newEnum(int visibilityAccess) {
+        return ClassInfo.classInfo()
+            .superclass(Enum.class.getName())
+            .modifiers(visibilityAccess | ACC_ENUM | ACC_FINAL | ACC_SYNCHRONIZED);
     }
 
     public void addToFields(FieldInfo field) {
         fields.add(field);
-        if (!isEnum(getModifiers())) {
+        if (!isEnum()) {
             Collections.sort(fields);
         }
     }
@@ -127,6 +176,8 @@ public class ClassInfo extends MemberInfo {
     public String getContent() {
         StringBuilder b = new StringBuilder("C{N=")
             .append(getName())
+            .append("#T=")
+            .append(type)
             .append("#V=")
             .append(version);
 

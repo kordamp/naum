@@ -46,6 +46,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
     public static final String KEY_CLASS_INNERCLASS_REMOVED = "class.innerclass.removed";
     public static final String KEY_CLASS_INNERCLASS_ADDED = "class.innerclass.added";
     public static final String KEY_CLASS_MODIFIERS_MODIFIED = "class.modifiers.modified";
+    public static final String KEY_CLASS_TYPE_MODIFIED = "class.type.modified";
 
     private final ClassInfo previous;
     private final ClassInfo next;
@@ -57,6 +58,9 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
         }
 
         List<Diff> list = new ArrayList<>();
+
+        // 0. type => class | interface | enum | annotation
+        checkType(list);
 
         // 1. version
         checkVersion(list);
@@ -84,6 +88,20 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
         checkInnerClasses(list);
 
         return list;
+    }
+
+    private void checkType(Collection<Diff> list) {
+        if (previous.getType() != next.getType()) {
+            list.add(
+                Diff.diff()
+                    .severity(Diff.Severity.ERROR)
+                    .type(Diff.Type.MODIFIED)
+                    .messageKey(KEY_CLASS_TYPE_MODIFIED)
+                    .messageArg(previous.getName())
+                    .messageArg(previous.getType().name().toLowerCase())
+                    .messageArg(next.getType().name().toLowerCase())
+                    .build());
+        }
     }
 
     private void checkVersion(Collection<Diff> list) {

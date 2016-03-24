@@ -143,7 +143,7 @@ public class ClassProcessor extends ClassVisitor {
             return new ConstructorProcessor(constructor);
         }
 
-        boolean ownerIsInterface = (owner.getModifiers() & Opcodes.ACC_INTERFACE) == Opcodes.ACC_INTERFACE;
+        boolean ownerIsInterface = owner.isInterface();
 
         if (ownerIsInterface && access == Opcodes.ACC_PUBLIC) {
             access = access | Opcodes.ACC_DEFAULT;
@@ -163,6 +163,10 @@ public class ClassProcessor extends ClassVisitor {
 
     @Override
     public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+        if("$VALUES".equals(name) && classStack.peek().isEnum()) {
+            return null;
+        }
+
         String signatureDesc = signature != null ? signature : desc;
         SignatureReader r = new SignatureReader(signatureDesc);
         CustomTraceSignatureVisitor sv = new CustomTraceSignatureVisitor(Opcodes.ACC_PUBLIC);

@@ -19,18 +19,7 @@ import org.kordamp.naum.model.MemberInfo;
 
 import java.util.Collection;
 
-import static org.kordamp.naum.model.Modifiers.isAbstract;
-import static org.kordamp.naum.model.Modifiers.isDefault;
-import static org.kordamp.naum.model.Modifiers.isFinal;
-import static org.kordamp.naum.model.Modifiers.isNative;
-import static org.kordamp.naum.model.Modifiers.isPrivate;
-import static org.kordamp.naum.model.Modifiers.isProtected;
-import static org.kordamp.naum.model.Modifiers.isPublic;
-import static org.kordamp.naum.model.Modifiers.isStatic;
-import static org.kordamp.naum.model.Modifiers.isStrict;
-import static org.kordamp.naum.model.Modifiers.isSynchronized;
-import static org.kordamp.naum.model.Modifiers.isTransient;
-import static org.kordamp.naum.model.Modifiers.isVolatile;
+import static org.kordamp.naum.model.Modifiers.modifiersAsString;
 
 /**
  * @author Andres Almiray
@@ -54,47 +43,5 @@ public abstract class AbstractMemberDiffer<T extends MemberInfo> extends Abstrac
                     .messageArg(next.getModifiers())
                     .build());
         }
-    }
-
-    public static String modifiersAsString(int modifiers) {
-        StringBuilder b = new StringBuilder();
-
-        if (isPublic(modifiers)) {
-            b.append("public ");
-        } else if (isProtected(modifiers)) {
-            b.append("protected ");
-        } else if (isPrivate(modifiers)) {
-            b.append("private ");
-        }
-
-        if (isStatic(modifiers)) {
-            b.append("static ");
-        }
-        if (isFinal(modifiers)) {
-            b.append("final ");
-        }
-        if (isAbstract(modifiers)) {
-            b.append("abstract ");
-        }
-        if (isDefault(modifiers)) {
-            b.append("default ");
-        }
-        if (isVolatile(modifiers)) {
-            b.append("volatile ");
-        }
-        if (isTransient(modifiers)) {
-            b.append("transient ");
-        }
-        if (isSynchronized(modifiers)) {
-            b.append("synchronized ");
-        }
-        if (isStrict(modifiers)) {
-            b.append("strict ");
-        }
-        if (isNative(modifiers)) {
-            b.append("native ");
-        }
-
-        return b.toString().trim();
     }
 }
