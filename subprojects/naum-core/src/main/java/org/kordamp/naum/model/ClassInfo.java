@@ -47,10 +47,10 @@ public class ClassInfo extends MemberInfo {
     private final String typeParameters;
     private final String superclass;
     private final String[] interfaces;
-    private List<FieldInfo> fields = new ArrayList<>();
-    private List<ConstructorInfo> constructors = new ArrayList<>();
-    private List<MethodInfo> methods = new ArrayList<>();
-    private List<InnerClassInfo> classes = new ArrayList<>();
+    private final List<FieldInfo> fields = new ArrayList<>();
+    private final List<ConstructorInfo> constructors = new ArrayList<>();
+    private final List<MethodInfo> methods = new ArrayList<>();
+    private final List<InnerClassInfo> classes = new ArrayList<>();
 
     private ClassInfo(String name, int version, int modifiers, String typeParameters, String superclass, String[] interfaces) {
         super(name, modifiers);

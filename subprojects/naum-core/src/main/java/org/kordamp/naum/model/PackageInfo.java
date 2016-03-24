@@ -32,7 +32,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class PackageInfo extends AnnotatedInfo {
-    private List<InnerClassInfo> classes = new ArrayList<>();
+    private final List<InnerClassInfo> classes = new ArrayList<>();
 
     private PackageInfo(String name) {
         super(name);
