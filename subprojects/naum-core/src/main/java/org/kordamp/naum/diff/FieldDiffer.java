@@ -30,6 +30,9 @@ import java.util.List;
 @Data(staticConstructor = "fieldDiffer")
 @EqualsAndHashCode(callSuper = true)
 public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
+    public static final String KEY_FIELD_MODIFIERS_MODIFIED = "field.modifiers.modified";
+    public static final String KEY_FIELD_TYPE_MODIFIED = "field.type.modified";
+
     private final FieldInfo previous;
     private final FieldInfo next;
 
@@ -60,7 +63,8 @@ public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
                 Diff.builder()
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.MODIFIED)
-                    .messageKey("method.type.modified")
+                    .messageKey(KEY_FIELD_TYPE_MODIFIED)
+                    .messageArg(previous.getName())
                     .messageArg(previous.getType())
                     .messageArg(next.getType())
                     .build());

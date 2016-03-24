@@ -69,6 +69,7 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.MODIFIED)
                     .messageKey("method.type.modified")
+                    .messageArg(previous.getName())
                     .messageArg(previous.getReturnType())
                     .messageArg(next.getReturnType())
                     .build());
@@ -97,6 +98,7 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.REMOVED)
                         .messageKey("method.exception.removed")
+                        .messageArg(previous.getName())
                         .messageArg(e)
                         .build());
             }
@@ -107,6 +109,7 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.ADDED)
                         .messageKey("method.exception.added")
+                        .messageArg(previous.getName())
                         .messageArg(e)
                         .build());
             }

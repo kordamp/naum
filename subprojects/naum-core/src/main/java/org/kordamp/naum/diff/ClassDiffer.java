@@ -93,6 +93,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
                     .severity(Diff.Severity.WARNING)
                     .type(Diff.Type.MODIFIED)
                     .messageKey(KEY_CLASS_VERSION_MODIFIED)
+                    .messageArg(previous.getName())
                     .messageArg(previous.getVersion())
                     .messageArg(next.getVersion())
                     .build());
@@ -106,6 +107,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.MODIFIED)
                     .messageKey(KEY_CLASS_SUPERCLASS_MODIFIED)
+                    .messageArg(previous.getName())
                     .messageArg(previous.getSuperclass())
                     .messageArg(next.getSuperclass())
                     .build());
@@ -134,6 +136,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.REMOVED)
                         .messageKey(KEY_CLASS_INTERFACE_REMOVED)
+                        .messageArg(previous.getName())
                         .messageArg(i)
                         .build());
             }
@@ -144,6 +147,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.ADDED)
                         .messageKey(KEY_CLASS_INTERFACE_ADDED)
+                        .messageArg(previous.getName())
                         .messageArg(i)
                         .build());
             }
@@ -185,6 +189,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.REMOVED)
                     .messageKey(KEY_CLASS_INNERCLASS_REMOVED)
+                    .messageArg(previous.getName())
                     .messageArg(c)
                     .build());
         }
@@ -195,6 +200,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.ADDED)
                     .messageKey(KEY_CLASS_INNERCLASS_ADDED)
+                    .messageArg(previous.getName())
                     .messageArg(c)
                     .build());
         }
