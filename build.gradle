@@ -24,6 +24,7 @@ ext {
 
 apply plugin: 'base'
 apply plugin: 'com.github.kt3k.coveralls'
+apply from: 'gradle/idea.gradle'
 
 allprojects {
     apply plugin: 'idea'
