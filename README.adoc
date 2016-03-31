@@ -54,3 +54,14 @@ to use the gradle wrapper if available or your global gradle command. This is an
 === Next Steps
 
 Make a full build issuing `gradle build`.
+
+
+=== IDE integration
+
+.IntelliJ IDEA
+
+ . To create an IntelliJ Idea project, run `./gradlew clean idea`
+ . Make sure to install the Lombok plugin
+ . Check that annotation processing is enabled (should be if you created the plugin with the above command).
+
+
