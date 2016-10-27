@@ -42,6 +42,7 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
 
 /**
  * @author Andres Almiray
+ * @author Jochen Theodorou
  */
 @RunWith(JUnitParamsRunner.class)
 public class FieldDifferTest {

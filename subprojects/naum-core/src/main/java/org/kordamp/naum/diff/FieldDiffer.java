@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * @author Andres Almiray
+ * @author Jcohen Theodorou
  */
 @Data(staticConstructor = "fieldDiffer")
 @EqualsAndHashCode(callSuper = true)
