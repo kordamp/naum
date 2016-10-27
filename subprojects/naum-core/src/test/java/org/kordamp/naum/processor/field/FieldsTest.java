@@ -159,7 +159,7 @@ public class FieldsTest extends AbstractProcessorTest {
         ClassInfo classInfo = classInfoBuilderFor("org.kordamp.naum.processor.field.FieldsWithAnnotations").build();
         classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
-            .build());
+            .build());/*nm─*/
         for (FieldInfo f : fields) {
             classInfo.addToFields(f);
         }

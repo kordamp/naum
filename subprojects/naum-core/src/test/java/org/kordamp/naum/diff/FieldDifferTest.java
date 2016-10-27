@@ -32,19 +32,24 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.kordamp.naum.diff.Diff.diff;
 import static org.kordamp.naum.diff.FieldDiffer.KEY_FIELD_MODIFIERS_MODIFIED;
 import static org.kordamp.naum.diff.FieldDiffer.KEY_FIELD_TYPE_MODIFIED;
+import static org.kordamp.naum.diff.FieldDiffer.KEY_FIELD_VALUE_MODIFIED;
 import static org.kordamp.naum.diff.FieldDiffer.fieldDiffer;
 import static org.kordamp.naum.model.FieldInfo.fieldInfo;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_STATIC;
 
 /**
  * @author Andres Almiray
+ * @author Jochen Theodorou
  */
 @RunWith(JUnitParamsRunner.class)
 public class FieldDifferTest {
     private static final String FIELDNAME = "var";
     private static final String JAVA_LANG_OBJECT = "java.lang.Object";
     private static final String JAVA_LANG_INTEGER = "java.lang.Integer";
+    private static final String OBJECT_FIELD_VALUE = "value";
 
     @Test
     @Parameters(method = "parameters")
@@ -102,6 +107,32 @@ public class FieldDifferTest {
                         .messageArg(FIELDNAME)
                         .messageArg(JAVA_LANG_OBJECT)
                         .messageArg(JAVA_LANG_INTEGER)
+                        .build()
+                )
+            },
+
+            new Object[] {
+                "value",
+                fieldInfo()
+                    .name(FIELDNAME)
+                    .type(JAVA_LANG_OBJECT)
+                    .modifiers(ACC_FINAL | ACC_STATIC)
+                    .value(null)
+                    .build(),
+                fieldInfo()
+                    .name(FIELDNAME)
+                    .type(JAVA_LANG_OBJECT)
+                    .modifiers(ACC_FINAL | ACC_STATIC)
+                    .value(OBJECT_FIELD_VALUE)
+                    .build(),
+                asList(
+                    diff()
+                        .severity(Diff.Severity.ERROR)
+                        .type(Diff.Type.MODIFIED)
+                        .messageKey(KEY_FIELD_VALUE_MODIFIED)
+                        .messageArg(FIELDNAME)
+                        .messageArg(null)
+                        .messageArg(OBJECT_FIELD_VALUE)
                         .build()
                 )
             },
