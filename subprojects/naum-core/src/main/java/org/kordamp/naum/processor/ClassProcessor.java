@@ -95,11 +95,6 @@ public class ClassProcessor extends ClassVisitor {
     }
 
     @Override
-    public void visitSource(String source, String debug) {
-        super.visitSource(source, debug);
-    }
-
-    @Override
     public void visitInnerClass(String name, String outerName, String innerName, int access) {
         if (MAGIC_LAMBDA_IMPL_NAME.equals(name)) {
             return;
@@ -163,7 +158,7 @@ public class ClassProcessor extends ClassVisitor {
 
     @Override
     public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-        if("$VALUES".equals(name) && classStack.peek().isEnum()) {
+        if ("$VALUES".equals(name) && classStack.peek().isEnum()) {
             return null;
         }
 

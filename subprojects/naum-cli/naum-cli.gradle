@@ -5,7 +5,7 @@ mainClassName = 'org.kordamp.naum.Main'
 
 dependencies {
     compile project(':naum-core')
-    compile 'com.beust:jcommander:1.48'
+    compile 'com.beust:jcommander:1.58'
 }
 
 shadowJar {
