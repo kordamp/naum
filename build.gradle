@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 buildscript {
     repositories {
         jcenter()
@@ -13,36 +15,48 @@ buildscript {
         classpath 'net.nemerosa:versioning:2.5.0'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
         classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.10'
+        classpath 'net.nemerosa:versioning:2.5.0'
     }
-}
-
-import java.text.SimpleDateFormat
-Date buildTimeAndDate = new Date()
-ext {
-    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
 }
 
 apply plugin: 'base'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'net.nemerosa.versioning'
 apply from: 'gradle/idea.gradle'
+
+Date buildTimeAndDate = new Date()
+ext {
+    buildBy = System.properties['user.name']
+    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+    buildRevision = versioning.info.commit
+    buildCreatedBy = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
+    projectsWithCoverage = []
+    baseJaCocoDir = "${buildDir}/reports/jacoco/test/"
+    jacocoMergeExecFile = "${baseJaCocoDir}jacocoTestReport.exec"
+    jacocoMergeReportHTMLFile = "${baseJaCocoDir}/html/"
+    jacocoMergeReportXMLFile = "${baseJaCocoDir}/jacocoTestReport.xml"
+}
 
 allprojects {
     apply plugin: 'idea'
     apply plugin: 'org.kordamp.gradle.stats'
     apply plugin: 'com.github.ben-manes.versions'
-}
-
-subprojects {
-    apply plugin: 'java'
-    apply from: rootProject.file('gradle/publishing.gradle')
-    apply from: rootProject.file('gradle/code-coverage.gradle')
-    apply from: rootProject.file('gradle/code-quality.gradle')
-    apply plugin: 'info.solidsoft.pitest'
+    apply plugin: 'jacoco'
 
     repositories {
         jcenter()
     }
+
+    jacoco {
+        toolVersion = jacocoVersion
+    }
+}
+
+subprojects { subproj ->
+    apply plugin: 'java'
+    apply from: rootProject.file('gradle/code-quality.gradle')
+    apply plugin: 'info.solidsoft.pitest'
 
     dependencies {
         testCompile 'junit:junit:4.12'
@@ -50,18 +64,43 @@ subprojects {
         testCompile 'pl.pragmatists:JUnitParams:1.0.5'
     }
 
-    task sourcesJar(type: Jar) {
-        group 'Build'
-        description 'An archive of the source code'
-        classifier 'sources'
-        from sourceSets.main.allSource
+    if (subproj.publishJars.toBoolean()) {
+        apply from: rootProject.file('gradle/code-coverage.gradle')
+        apply from: rootProject.file('gradle/publishing.gradle')
+
+        task sourcesJar(type: Jar) {
+            group 'Build'
+            description 'An archive of the source code'
+            classifier 'sources'
+            from sourceSets.main.allSource
+        }
+
+        jar.finalizedBy sourcesJar
+
+        artifacts {
+            sourcesJar
+        }
     }
-
-    jar.finalizedBy sourcesJar
-
-    artifacts {
-        sourcesJar
-    }
-
-    // check.dependsOn pitest
 }
+
+evaluationDependsOnChildren()
+
+task jacocoRootMerge(type: org.gradle.testing.jacoco.tasks.JacocoMerge) {
+    dependsOn = projectsWithCoverage.test + projectsWithCoverage.jacocoTestReport
+    executionData = files(projectsWithCoverage.jacocoTestReport.executionData)
+    destinationFile = file(jacocoMergeExecFile)
+}
+
+task jacocoRootMergeReport(dependsOn: jacocoRootMerge, type: JacocoReport) {
+    executionData projectsWithCoverage.jacocoTestReport.executionData
+    sourceDirectories = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(projectsWithCoverage.sourceSets.main.output)
+
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        html.destination = file(jacocoMergeReportHTMLFile)
+        xml.destination = file(jacocoMergeReportXMLFile)
+    }
+}
+

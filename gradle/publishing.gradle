@@ -5,11 +5,11 @@ apply plugin: 'net.nemerosa.versioning'
 jar {
     manifest {
         attributes(
-            'Built-By': System.properties['user.name'],
-            'Created-By': System.properties['java.version'] + " (" + System.properties['java.vendor'] + " " + System.properties['java.vm.version'] + ")",
-            'Build-Date': project.buildDate,
-            'Build-Time': project.buildTime,
-            'Build-Revision': versioning.info.commit,
+            'Built-By': buildBy,
+            'Created-By': buildCreatedBy,
+            'Build-Date': buildDate,
+            'Build-Time': buildTime,
+            'Build-Revision': buildRevision,
             'Specification-Title': project.name,
             'Specification-Version': project.version,
             'Specification-Vendor': project.project_vendor,
@@ -62,7 +62,15 @@ publishing {
             artifact sourcesJar
 
             pom.withXml {
+                // all dependencies should use the default scope (compile) but
+                // Gradle insists in using runtime as default
+                asNode().dependencies.dependency.each { dep ->
+                    if (dep.scope.text() == 'runtime') {
+                        dep.remove(dep.scope)
+                    }
+                }
                 asNode().children().last() + pomConfig
+                asNode().appendNode('description', project.pomDescription)
             }
         }
     }
