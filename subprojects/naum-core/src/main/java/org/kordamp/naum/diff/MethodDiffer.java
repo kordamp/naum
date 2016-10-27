@@ -33,6 +33,11 @@ import static java.util.Arrays.asList;
 @Data(staticConstructor = "methodDiffer")
 @EqualsAndHashCode(callSuper = true)
 public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
+    public static final String KEY_METHOD_MODIFIERS_MODIFIED = "method.modifiers.modified";
+    public static final String KEY_METHOD_TYPE_MODIFIED = "method.type.modified";
+    public static final String KEY_METHOD_EXCEPTION_REMOVED = "method.exception.removed";
+    public static final String KEY_METHOD_EXCEPTION_ADDED = "method.exception.added";
+
     private final MethodInfo previous;
     private final MethodInfo next;
 
@@ -68,7 +73,7 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
                 Diff.diff()
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.MODIFIED)
-                    .messageKey("method.type.modified")
+                    .messageKey(KEY_METHOD_TYPE_MODIFIED)
                     .messageArg(previous.getName())
                     .messageArg(previous.getReturnType())
                     .messageArg(next.getReturnType())
@@ -97,7 +102,7 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
                     Diff.diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.REMOVED)
-                        .messageKey("method.exception.removed")
+                        .messageKey(KEY_METHOD_EXCEPTION_REMOVED)
                         .messageArg(previous.getName())
                         .messageArg(e)
                         .build());
@@ -108,7 +113,7 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
                     Diff.diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.ADDED)
-                        .messageKey("method.exception.added")
+                        .messageKey(KEY_METHOD_EXCEPTION_ADDED)
                         .messageArg(previous.getName())
                         .messageArg(e)
                         .build());
