@@ -122,6 +122,15 @@ public class ClassInfo extends MemberInfo {
         return type == Type.ANNOTATION;
     }
 
+    public static ClassInfoBuilder newClass() {
+        return newClass(ACC_PUBLIC);
+    }
+
+    public static ClassInfoBuilder newClass(int visibilityAccess) {
+        return ClassInfo.classInfo()
+            .modifiers(visibilityAccess);
+    }
+
     public static ClassInfoBuilder newInterface() {
         return newInterface(ACC_PUBLIC);
     }

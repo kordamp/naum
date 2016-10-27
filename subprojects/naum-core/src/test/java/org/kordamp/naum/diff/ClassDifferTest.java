@@ -31,10 +31,21 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_INTERFACE_ADDED;
+import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_INTERFACE_REMOVED;
+import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_MODIFIERS_MODIFIED;
+import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_SUPERCLASS_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_TYPE_MODIFIED;
+import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_VERSION_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.classDiffer;
 import static org.kordamp.naum.diff.Diff.diff;
+import static org.kordamp.naum.model.ClassInfo.newAnnotation;
+import static org.kordamp.naum.model.ClassInfo.newClass;
 import static org.kordamp.naum.model.ClassInfo.newInterface;
+import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.V1_7;
+import static org.objectweb.asm.Opcodes.V1_8;
 
 /**
  * @author Andres Almiray
@@ -65,7 +76,7 @@ public class ClassDifferTest {
                 newInterface()
                     .name(CLASSNAME)
                     .build(),
-                ClassInfo.newAnnotation()
+                newAnnotation()
                     .name(CLASSNAME)
                     .build(),
                 asList(
@@ -80,14 +91,13 @@ public class ClassDifferTest {
                 )
             },
 
-            /*
             new Object[]{
                 "version",
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .version(V1_7)
                     .build(),
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .version(V1_8)
                     .build(),
@@ -105,10 +115,10 @@ public class ClassDifferTest {
 
             new Object[]{
                 "superclass",
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .build(),
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .superclass(SUPER_CLASSNAME)
                     .build(),
@@ -126,11 +136,11 @@ public class ClassDifferTest {
 
             new Object[]{
                 "modifiers",
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .modifiers(ACC_PUBLIC)
                     .build(),
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .modifiers(ACC_PRIVATE)
                     .build(),
@@ -150,11 +160,11 @@ public class ClassDifferTest {
 
             new Object[]{
                 "interfaces - removed",
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .iface(JAVA_IO_SERIALIZABLE)
                     .build(),
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .build(),
                 asList(
@@ -170,10 +180,10 @@ public class ClassDifferTest {
 
             new Object[]{
                 "interfaces - added",
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .build(),
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .iface(JAVA_IO_SERIALIZABLE)
                     .build(),
@@ -189,13 +199,13 @@ public class ClassDifferTest {
             },
 
             new Object[]{
-                "interfaces - mixed",
-                classInfo()
+                "interfaces - modified",
+                newClass()
                     .name(CLASSNAME)
                     .iface(JAVA_IO_SERIALIZABLE)
                     .iface(JAVA_IO_CLONEABLE)
                     .build(),
-                classInfo()
+                newClass()
                     .name(CLASSNAME)
                     .iface(JAVA_IO_SERIALIZABLE)
                     .iface(JAVA_IO_CLOSEABLE)
@@ -217,7 +227,6 @@ public class ClassDifferTest {
                         .build()
                 )
             }
-            */
         };
     }
 }
