@@ -20,7 +20,7 @@ import junitparams.Parameters;
 import junitparams.naming.TestCaseName;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kordamp.naum.model.MethodInfo;
+import org.kordamp.naum.model.ConstructorInfo;
 
 import java.util.Collection;
 
@@ -29,13 +29,12 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.kordamp.naum.diff.ConstructorDiffer.KEY_CONSTRUCTOR_EXCEPTION_ADDED;
+import static org.kordamp.naum.diff.ConstructorDiffer.KEY_CONSTRUCTOR_EXCEPTION_REMOVED;
+import static org.kordamp.naum.diff.ConstructorDiffer.KEY_CONSTRUCTOR_MODIFIERS_MODIFIED;
+import static org.kordamp.naum.diff.ConstructorDiffer.constructorDiffer;
 import static org.kordamp.naum.diff.Diff.diff;
-import static org.kordamp.naum.diff.MethodDiffer.KEY_METHOD_EXCEPTION_ADDED;
-import static org.kordamp.naum.diff.MethodDiffer.KEY_METHOD_EXCEPTION_REMOVED;
-import static org.kordamp.naum.diff.MethodDiffer.KEY_METHOD_MODIFIERS_MODIFIED;
-import static org.kordamp.naum.diff.MethodDiffer.KEY_METHOD_TYPE_MODIFIED;
-import static org.kordamp.naum.diff.MethodDiffer.methodDiffer;
-import static org.kordamp.naum.model.MethodInfo.methodInfo;
+import static org.kordamp.naum.model.ConstructorInfo.constructorInfo;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
@@ -43,18 +42,15 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
  * @author Andres Almiray
  */
 @RunWith(JUnitParamsRunner.class)
-public class MethodDifferTest {
-    private static final String METHODNAME = "foo";
-    private static final String JAVA_LANG_OBJECT = "java.lang.Object";
-    private static final String JAVA_LANG_INTEGER = "java.lang.Integer";
+public class ConstructorDifferTest {
     private static final String JAVA_LANG_RUNTIMEEXCEPTION = "java.lang.RuntimeException";
     private static final String JAVA_LANG_ILLEGALARGUMENTEXCEPTION = "java.lang.IllegalArgumentException";
 
     @Test
     @Parameters(method = "parameters")
-    @TestCaseName("{method}[{index}] - {0}")
-    public void methodsDiffer(String testName, MethodInfo previous, MethodInfo next, Collection<Diff> expected) {
-        MethodDiffer differ = methodDiffer(previous, next);
+    @TestCaseName("{constructor}[{index}] - {0}")
+    public void constructorsDiffer(String testName, ConstructorInfo previous, ConstructorInfo next, Collection<Diff> expected) {
+        ConstructorDiffer differ = constructorDiffer(previous, next);
         Collection<Diff> actual = differ.diff();
         assertThat(actual, hasSize(greaterThan(0)));
         assertThat(actual, equalTo(expected));
@@ -64,22 +60,18 @@ public class MethodDifferTest {
         return new Object[]{
             new Object[]{
                 "modifiers",
-                methodInfo()
-                    .name(METHODNAME)
+                constructorInfo()
                     .modifiers(ACC_PUBLIC)
-                    .returnType(JAVA_LANG_OBJECT)
                     .build(),
-                methodInfo()
-                    .name(METHODNAME)
+                constructorInfo()
                     .modifiers(ACC_PRIVATE)
-                    .returnType(JAVA_LANG_OBJECT)
                     .build(),
                 asList(
                     diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.MODIFIED)
-                        .messageKey(KEY_METHOD_MODIFIERS_MODIFIED)
-                        .messageArg(METHODNAME)
+                        .messageKey(KEY_CONSTRUCTOR_MODIFIERS_MODIFIED)
+                        .messageArg(ConstructorInfo.NAME)
                         .messageArg("public")
                         .messageArg(ACC_PUBLIC)
                         .messageArg("private")
@@ -89,96 +81,58 @@ public class MethodDifferTest {
             },
 
             new Object[]{
-                "type",
-                methodInfo()
-                    .name(METHODNAME)
-                    .returnType(JAVA_LANG_OBJECT)
-                    .build(),
-                methodInfo()
-                    .name(METHODNAME)
-                    .returnType(JAVA_LANG_INTEGER)
-                    .build(),
-                asList(
-                    diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.MODIFIED)
-                        .messageKey(KEY_METHOD_TYPE_MODIFIED)
-                        .messageArg(METHODNAME)
-                        .messageArg(JAVA_LANG_OBJECT)
-                        .messageArg(JAVA_LANG_INTEGER)
-                        .build()
-                )
-            },
-
-            new Object[] {
                 "exceptions-added",
-                methodInfo()
-                    .name(METHODNAME)
-                    .returnType(JAVA_LANG_OBJECT)
+                constructorInfo()
                     .build(),
-                methodInfo()
-                    .name(METHODNAME)
-                    .returnType(JAVA_LANG_OBJECT)
+                constructorInfo()
                     .exceptions(new String[]{JAVA_LANG_RUNTIMEEXCEPTION})
                     .build(),
                 asList(
                     diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.ADDED)
-                        .messageKey(KEY_METHOD_EXCEPTION_ADDED)
-                        .messageArg(METHODNAME)
+                        .messageKey(KEY_CONSTRUCTOR_EXCEPTION_ADDED)
                         .messageArg(JAVA_LANG_RUNTIMEEXCEPTION)
                         .build()
                 )
             },
 
-            new Object[] {
+            new Object[]{
                 "exceptions-remove",
-                methodInfo()
-                    .name(METHODNAME)
-                    .returnType(JAVA_LANG_OBJECT)
+                constructorInfo()
                     .exceptions(new String[]{JAVA_LANG_RUNTIMEEXCEPTION})
                     .build(),
-                methodInfo()
-                    .name(METHODNAME)
-                    .returnType(JAVA_LANG_OBJECT)
+                constructorInfo()
                     .build(),
                 asList(
                     diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.REMOVED)
-                        .messageKey(KEY_METHOD_EXCEPTION_REMOVED)
-                        .messageArg(METHODNAME)
+                        .messageKey(KEY_CONSTRUCTOR_EXCEPTION_REMOVED)
                         .messageArg(JAVA_LANG_RUNTIMEEXCEPTION)
                         .build()
                 )
             },
 
-            new Object[] {
+            new Object[]{
                 "exceptions-modified",
-                methodInfo()
-                    .name(METHODNAME)
-                    .returnType(JAVA_LANG_OBJECT)
+                constructorInfo()
                     .exceptions(new String[]{JAVA_LANG_RUNTIMEEXCEPTION})
                     .build(),
-                methodInfo()
-                    .name(METHODNAME)
-                    .returnType(JAVA_LANG_OBJECT)
+                constructorInfo()
                     .exceptions(new String[]{JAVA_LANG_ILLEGALARGUMENTEXCEPTION})
                     .build(),
                 asList(
                     diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.REMOVED)
-                        .messageKey(KEY_METHOD_EXCEPTION_REMOVED)
-                        .messageArg(METHODNAME)
+                        .messageKey(KEY_CONSTRUCTOR_EXCEPTION_REMOVED)
                         .messageArg(JAVA_LANG_RUNTIMEEXCEPTION)
                         .build(),
                     diff()
                         .severity(Diff.Severity.ERROR)
                         .type(Diff.Type.ADDED)
-                        .messageKey(KEY_METHOD_EXCEPTION_ADDED)
-                        .messageArg(METHODNAME)
+                        .messageKey(KEY_CONSTRUCTOR_EXCEPTION_ADDED)
                         .messageArg(JAVA_LANG_ILLEGALARGUMENTEXCEPTION)
                         .build()
                 )
