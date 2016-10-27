@@ -32,6 +32,7 @@ import java.util.List;
 public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
     public static final String KEY_FIELD_MODIFIERS_MODIFIED = "field.modifiers.modified";
     public static final String KEY_FIELD_TYPE_MODIFIED = "field.type.modified";
+    public static final String KEY_FIELD_VALUE_MODIFIED = "field.value.modified";
 
     private final FieldInfo previous;
     private final FieldInfo next;
@@ -51,10 +52,35 @@ public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
         checkType(list);
 
         // 3. value
+        checkValue(list);
 
         // 4. annotations
 
         return list;
+    }
+
+    private boolean isEquals(Object a, Object b) {
+        if (a==null && b==null) {
+            return true;
+        }
+        if (a==null ^ b==null) {
+            return false;
+        }
+        return a.equals(b);
+    }
+
+    private void checkValue(List<Diff> list) {
+        if (!isEquals(previous.getValue(), next.getValue())) {
+            list.add(
+                Diff.diff()
+                    .severity(Diff.Severity.ERROR)
+                    .type(Diff.Type.MODIFIED)
+                    .messageKey(KEY_FIELD_VALUE_MODIFIED)
+                    .messageArg(previous.getName())
+                    .messageArg(previous.getValue())
+                    .messageArg(next.getValue())
+                    .build());
+        }
     }
 
     private void checkType(List<Diff> list) {
