@@ -3,6 +3,7 @@ dependencies {
     
     compile 'org.ow2.asm:asm-all:5.1'
     compile 'com.google.code.findbugs:jsr305:3.0.1'
+    compile 'org.apache.commons:commons-collections4:4.1'
 
     testCompile 'javax.inject:javax.inject:1'
 }

@@ -16,18 +16,31 @@
 package org.kordamp.naum.diff;
 
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kordamp.naum.model.AnnotationInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Type.ADDED;
+import static org.kordamp.naum.diff.Diff.Type.MODIFIED;
 
 /**
  * @author Andres Almiray
+ * @author Maxim Moschko
+ * @author Stephan Classen
  */
 @Data(staticConstructor = "annotationDiffer")
 public class AnnotationDiffer implements Differ<AnnotationInfo> {
+    public static final String KEY_ANNOTATION_VALUE_ADDED = "annotation.value.added";
+    public static final String KEY_ANNOTATION_VALUE_REMOVED = "annotation.value.removed";
+    public static final String KEY_ANNOTATION_VALUE_MODIFIED = "annotation.value.modified";
+
     private final AnnotationInfo previous;
     private final AnnotationInfo next;
 
@@ -40,11 +53,66 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
         List<Diff> list = new ArrayList<>();
 
         // 1. values
+        checkValues(list);
+
 
         // 2. enumValues
 
         // 3. annotations
 
         return list;
+    }
+
+    private void checkValues(List<Diff> inList) {
+        Set<String> prevKeySet = previous.getValues().keySet();
+        Set<String> nextKeySet = next.getValues().keySet();
+
+        Collection<String> removedKeys = CollectionUtils.subtract(prevKeySet, nextKeySet);
+        Collection<String> addedKeys = CollectionUtils.subtract(nextKeySet, prevKeySet);
+        Collection<String> sameKeys = CollectionUtils.intersection(nextKeySet, prevKeySet);
+
+        for (String key : addedKeys) {
+            inList.add(Diff.diff()
+                .severity(ERROR)
+                .type(ADDED)
+                .messageKey(KEY_ANNOTATION_VALUE_ADDED)
+                .messageArg(getAnnotationName())
+                .messageArg(key)
+                .build()
+            );
+        }
+        for (String key : removedKeys) {
+            inList.add(Diff.diff()
+                .severity(ERROR)
+                .type(Diff.Type.REMOVED)
+                .messageKey(KEY_ANNOTATION_VALUE_REMOVED)
+                .messageArg(getAnnotationName())
+                .messageArg(key)
+                .build()
+            );
+        }
+        for (String key : sameKeys) {
+            Object prevValue = previous.getValues().get(key);
+            Object nextValue = next.getValues().get(key);
+            if (!Objects.equals(prevValue, nextValue)) {
+                inList.add(
+                    Diff.diff()
+                        .severity(ERROR)
+                        .type(MODIFIED)
+                        .messageKey(KEY_ANNOTATION_VALUE_MODIFIED)
+                        .messageArg(getAnnotationName())
+                        .messageArg(key)
+                        .messageArg(prevValue.getClass().getName())
+                        .messageArg(prevValue)
+                        .messageArg(nextValue.getClass().getName())
+                        .messageArg(nextValue)
+                        .build()
+                );
+            }
+        }
+    }
+
+    private String getAnnotationName() {
+        return previous.getName();
     }
 }
