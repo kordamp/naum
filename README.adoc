@@ -4,6 +4,8 @@
 :project-repo: kordamp
 :project-name: naum
 
+image:http://img.shields.io/travis/{project-owner}/{project-name}.svg["Build Status (travis)", link="https://travis-ci.org/{project-owner}/{project-name}"]
+image:http://img.shields.io/coveralls/{project-owner}/{project-name}.svg["Coverage Status (coveralls)", link="https://coveralls.io/r/{project-owner}/{project-name}"]
 image:http://img.shields.io/badge/license-ASL2-blue.svg["ASL2 Licensed", link="http://opensource.org/licenses/ASL2"]
 image:https://api.bintray.com/packages/{project-owner}/{project-repo}/{project-name}/images/download.svg[link="https://bintray.com/{project-owner}/{project-repo}/{project-name}/_latestVersion"]
 
