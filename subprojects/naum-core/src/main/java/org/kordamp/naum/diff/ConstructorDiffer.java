@@ -33,6 +33,11 @@ import static java.util.Arrays.asList;
 @Data(staticConstructor = "constructorDiffer")
 @EqualsAndHashCode(callSuper = true)
 public class ConstructorDiffer extends AbstractMemberDiffer<ConstructorInfo> {
+    public static final String KEY_CONSTRUCTOR_MODIFIERS_MODIFIED = "constructor.modifiers.modified";
+    public static final String KEY_CONSTRUCTOR_TYPE_MODIFIED = "constructor.type.modified";
+    public static final String KEY_CONSTRUCTOR_EXCEPTION_REMOVED = "constructor.exception.removed";
+    public static final String KEY_CONSTRUCTOR_EXCEPTION_ADDED = "constructor.exception.added";
+
     private final ConstructorInfo previous;
     private final ConstructorInfo next;
 

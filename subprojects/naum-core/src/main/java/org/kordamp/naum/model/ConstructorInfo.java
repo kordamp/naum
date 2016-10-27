@@ -30,11 +30,13 @@ import java.util.Arrays;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class ConstructorInfo extends MemberInfo {
+    public static final String NAME = "<init>";
+
     private final String argumentTypes;
     private final String[] exceptions;
 
     private ConstructorInfo(int modifiers, String argumentTypes, String[] exceptions) {
-        super("<init>", modifiers);
+        super(NAME, modifiers);
         this.argumentTypes = argumentTypes;
         this.exceptions = exceptions;
     }
