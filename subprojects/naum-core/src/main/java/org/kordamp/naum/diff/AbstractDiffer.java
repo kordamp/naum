@@ -41,6 +41,17 @@ public abstract class AbstractDiffer<T extends AnnotatedInfo> implements Differ<
         Collection<AnnotationInfo> removed = CollectionUtils.subtract(p, n);
         Collection<AnnotationInfo> added = CollectionUtils.subtract(n, p);
 
+        for (AnnotationInfo a : removed) {
+            list.add(Diff.diff()
+                .severity(ERROR)
+                .type(REMOVED)
+                .messageKey(keyPrefix + ".annotation.removed")
+                .messageArg(getElementName())
+                .messageArg("@" + a.getName())
+                .build()
+            );
+        }
+
         for (AnnotationInfo a : added) {
             list.add(Diff.diff()
                 .severity(ERROR)
@@ -52,15 +63,5 @@ public abstract class AbstractDiffer<T extends AnnotatedInfo> implements Differ<
             );
         }
 
-        for (AnnotationInfo a : removed) {
-            list.add(Diff.diff()
-                .severity(ERROR)
-                .type(REMOVED)
-                .messageKey(keyPrefix + ".annotation.removed")
-                .messageArg(getElementName())
-                .messageArg("@" + a.getName())
-                .build()
-            );
-        }
     }
 }

@@ -16,6 +16,7 @@
 package org.kordamp.naum.diff;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.kordamp.naum.model.AnnotationInfo;
 
@@ -37,10 +38,13 @@ import static org.kordamp.naum.diff.Diff.Type.REMOVED;
  * @author Stephan Classen
  */
 @Data(staticConstructor = "annotationDiffer")
-public class AnnotationDiffer implements Differ<AnnotationInfo> {
+@EqualsAndHashCode(callSuper = true)
+public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
     public static final String KEY_ANNOTATION_VALUE_ADDED = "annotation.value.added";
     public static final String KEY_ANNOTATION_VALUE_REMOVED = "annotation.value.removed";
     public static final String KEY_ANNOTATION_VALUE_MODIFIED = "annotation.value.modified";
+    public static final String KEY_ANNOTATION_ANNOTATION_REMOVED = "annotation.annotation.removed";
+    public static final String KEY_ANNOTATION_ANNOTATION_ADDED = "annotation.annotation.added";
 
     private final AnnotationInfo previous;
     private final AnnotationInfo next;
@@ -59,6 +63,7 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
         // 2. enumValues
 
         // 3. annotations
+        checkAnnotations(list, "annotation");
 
         return list;
     }
@@ -71,16 +76,7 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
         Collection<String> addedKeys = CollectionUtils.subtract(nextKeySet, prevKeySet);
         Collection<String> sameKeys = CollectionUtils.intersection(nextKeySet, prevKeySet);
 
-        for (String key : addedKeys) {
-            inList.add(Diff.diff()
-                .severity(ERROR)
-                .type(ADDED)
-                .messageKey(KEY_ANNOTATION_VALUE_ADDED)
-                .messageArg(getElementName())
-                .messageArg(key)
-                .build()
-            );
-        }
+
         for (String key : removedKeys) {
             inList.add(Diff.diff()
                 .severity(ERROR)
@@ -91,6 +87,18 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
                 .build()
             );
         }
+
+        for (String key : addedKeys) {
+            inList.add(Diff.diff()
+                .severity(ERROR)
+                .type(ADDED)
+                .messageKey(KEY_ANNOTATION_VALUE_ADDED)
+                .messageArg(getElementName())
+                .messageArg(key)
+                .build()
+            );
+        }
+
         for (String key : sameKeys) {
             Object prevValue = previous.getValues().get(key);
             Object nextValue = next.getValues().get(key);

@@ -29,7 +29,7 @@ import java.util.Arrays;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class ConstructorInfo extends MemberInfo {
+public class ConstructorInfo extends MemberInfo<ConstructorInfo> {
     public static final String NAME = "<init>";
 
     private final String argumentTypes;
@@ -48,7 +48,7 @@ public class ConstructorInfo extends MemberInfo {
             values[i] = values[i].replace('/', '.');
         }
         Arrays.sort(values);
-        argumentTypes = argumentTypes == null ? "": argumentTypes;
+        argumentTypes = argumentTypes == null ? "" : argumentTypes;
         return new ConstructorInfo(modifiers, argumentTypes, values);
     }
 

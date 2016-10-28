@@ -30,7 +30,7 @@ import java.util.Arrays;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class MethodInfo extends MemberInfo {
+public class MethodInfo extends MemberInfo<MethodInfo> {
     private final String genericTypes;
     private final String returnType;
     private final String argumentTypes;

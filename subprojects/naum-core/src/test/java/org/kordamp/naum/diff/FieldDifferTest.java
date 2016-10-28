@@ -29,11 +29,18 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Type.ADDED;
+import static org.kordamp.naum.diff.Diff.Type.MODIFIED;
+import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 import static org.kordamp.naum.diff.Diff.diff;
+import static org.kordamp.naum.diff.FieldDiffer.KEY_FIELD_ANNOTATION_ADDED;
+import static org.kordamp.naum.diff.FieldDiffer.KEY_FIELD_ANNOTATION_REMOVED;
 import static org.kordamp.naum.diff.FieldDiffer.KEY_FIELD_MODIFIERS_MODIFIED;
 import static org.kordamp.naum.diff.FieldDiffer.KEY_FIELD_TYPE_MODIFIED;
 import static org.kordamp.naum.diff.FieldDiffer.KEY_FIELD_VALUE_MODIFIED;
 import static org.kordamp.naum.diff.FieldDiffer.fieldDiffer;
+import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
 import static org.kordamp.naum.model.FieldInfo.fieldInfo;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
@@ -45,13 +52,10 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
  * @author Jochen Theodorou
  */
 @RunWith(JUnitParamsRunner.class)
-public class FieldDifferTest {
+public class FieldDifferTest extends AbstractDifferTestCase {
     private static final String FIELDNAME = "var";
-    private static final String JAVA_LANG_OBJECT = "java.lang.Object";
     private static final String JAVA_LANG_INTEGER = "java.lang.Integer";
     private static final String OBJECT_FIELD_VALUE = "value";
-    private static final String ANNOATION_A = "A";
-    private static final String ANNOATION_B = "B";
 
     @Test
     @Parameters(method = "parameters")
@@ -79,8 +83,8 @@ public class FieldDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.MODIFIED)
+                        .severity(ERROR)
+                        .type(MODIFIED)
                         .messageKey(KEY_FIELD_MODIFIERS_MODIFIED)
                         .messageArg(FIELDNAME)
                         .messageArg("public")
@@ -103,8 +107,8 @@ public class FieldDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.MODIFIED)
+                        .severity(ERROR)
+                        .type(MODIFIED)
                         .messageKey(KEY_FIELD_TYPE_MODIFIED)
                         .messageArg(FIELDNAME)
                         .messageArg(JAVA_LANG_OBJECT)
@@ -129,8 +133,8 @@ public class FieldDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.MODIFIED)
+                        .severity(ERROR)
+                        .type(MODIFIED)
                         .messageKey(KEY_FIELD_VALUE_MODIFIED)
                         .messageArg(FIELDNAME)
                         .messageArg(null)
@@ -138,6 +142,80 @@ public class FieldDifferTest {
                         .build()
                 )
             },
+
+            new Object[]{
+                "annotations-added",
+                fieldInfo()
+                    .name(FIELDNAME)
+                    .type(JAVA_LANG_OBJECT)
+                    .build(),
+                fieldInfo()
+                    .name(FIELDNAME)
+                    .type(JAVA_LANG_OBJECT)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_FIELD_ANNOTATION_ADDED)
+                        .messageArg(FIELDNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-removed",
+                fieldInfo()
+                    .name(FIELDNAME)
+                    .type(JAVA_LANG_OBJECT)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                fieldInfo()
+                    .name(FIELDNAME)
+                    .type(JAVA_LANG_OBJECT)
+                    .build(),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_FIELD_ANNOTATION_REMOVED)
+                        .messageArg(FIELDNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-modified",
+                fieldInfo()
+                    .name(FIELDNAME)
+                    .type(JAVA_LANG_OBJECT)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                fieldInfo()
+                    .name(FIELDNAME)
+                    .type(JAVA_LANG_OBJECT)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_B).build()),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_FIELD_ANNOTATION_REMOVED)
+                        .messageArg(FIELDNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build(),
+                    diff()
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_FIELD_ANNOTATION_ADDED)
+                        .messageArg(FIELDNAME)
+                        .messageArg("@" + ANNOTATION_B)
+                        .build()
+                )
+            }
         };
     }
 }

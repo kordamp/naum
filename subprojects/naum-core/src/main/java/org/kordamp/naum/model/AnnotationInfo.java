@@ -31,7 +31,7 @@ import java.util.Map;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class AnnotationInfo extends AnnotatedInfo {
+public class AnnotationInfo extends AnnotatedInfo<AnnotationInfo> {
     private final Map<String, Object> values = new LinkedHashMap<>();
     private final Map<String, EnumEntry> enumValues = new LinkedHashMap<>();
 

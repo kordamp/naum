@@ -37,8 +37,8 @@ public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
     public static final String KEY_FIELD_MODIFIERS_MODIFIED = "field.modifiers.modified";
     public static final String KEY_FIELD_TYPE_MODIFIED = "field.type.modified";
     public static final String KEY_FIELD_VALUE_MODIFIED = "field.value.modified";
-    public static final String KEY_FIELD_ANNOATION_REMOVED = "field.annotation.removed";
-    public static final String KEY_FIELD_ANNOATION_ADDED = "field.annotation.added";
+    public static final String KEY_FIELD_ANNOTATION_REMOVED = "field.annotation.removed";
+    public static final String KEY_FIELD_ANNOTATION_ADDED = "field.annotation.added";
 
     private final FieldInfo previous;
     private final FieldInfo next;

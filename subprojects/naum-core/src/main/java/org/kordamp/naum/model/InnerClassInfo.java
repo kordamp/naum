@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class InnerClassInfo extends MemberInfo {
+public class InnerClassInfo extends MemberInfo<InnerClassInfo> {
     private InnerClassInfo(String name, int modifiers) {
         super(name, modifiers);
     }

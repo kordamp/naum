@@ -52,6 +52,8 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
     public static final String KEY_CLASS_INNERCLASS_ADDED = "class.innerclass.added";
     public static final String KEY_CLASS_MODIFIERS_MODIFIED = "class.modifiers.modified";
     public static final String KEY_CLASS_TYPE_MODIFIED = "class.type.modified";
+    public static final String KEY_CLASS_ANNOTATION_REMOVED = "class.annotation.removed";
+    public static final String KEY_CLASS_ANNOTATION_ADDED = "class.annotation.added";
 
     private final ClassInfo previous;
     private final ClassInfo next;
@@ -82,6 +84,7 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
         // 5. type parameters
 
         // 6. annotations
+        checkAnnotations(list, "class");
 
         // 7. constructors
 

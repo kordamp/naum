@@ -31,6 +31,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_ANNOTATION_ADDED;
+import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_ANNOTATION_REMOVED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_INTERFACE_ADDED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_INTERFACE_REMOVED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_MODIFIERS_MODIFIED;
@@ -38,7 +40,11 @@ import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_SUPERCLASS_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_TYPE_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.KEY_CLASS_VERSION_MODIFIED;
 import static org.kordamp.naum.diff.ClassDiffer.classDiffer;
+import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Type.ADDED;
+import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 import static org.kordamp.naum.diff.Diff.diff;
+import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
 import static org.kordamp.naum.model.ClassInfo.newAnnotation;
 import static org.kordamp.naum.model.ClassInfo.newClass;
 import static org.kordamp.naum.model.ClassInfo.newInterface;
@@ -51,10 +57,9 @@ import static org.objectweb.asm.Opcodes.V1_8;
  * @author Andres Almiray
  */
 @RunWith(JUnitParamsRunner.class)
-public class ClassDifferTest {
+public class ClassDifferTest extends AbstractDifferTestCase {
     private static final String CLASSNAME = "org.example.Foo";
     private static final String SUPER_CLASSNAME = "org.example.Bar";
-    private static final String JAVA_LANG_OBJECT = "java.lang.Object";
     private static final String JAVA_IO_SERIALIZABLE = Serializable.class.getName();
     private static final String JAVA_IO_CLONEABLE = Cloneable.class.getName();
     private static final String JAVA_IO_CLOSEABLE = Closeable.class.getName();
@@ -81,7 +86,7 @@ public class ClassDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
+                        .severity(ERROR)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_CLASS_TYPE_MODIFIED)
                         .messageArg(CLASSNAME)
@@ -124,7 +129,7 @@ public class ClassDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
+                        .severity(ERROR)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_CLASS_SUPERCLASS_MODIFIED)
                         .messageArg(CLASSNAME)
@@ -146,7 +151,7 @@ public class ClassDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
+                        .severity(ERROR)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_CLASS_MODIFIERS_MODIFIED)
                         .messageArg(CLASSNAME)
@@ -169,8 +174,8 @@ public class ClassDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.REMOVED)
+                        .severity(ERROR)
+                        .type(REMOVED)
                         .messageKey(KEY_CLASS_INTERFACE_REMOVED)
                         .messageArg(CLASSNAME)
                         .messageArg(JAVA_IO_SERIALIZABLE)
@@ -189,8 +194,8 @@ public class ClassDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.ADDED)
+                        .severity(ERROR)
+                        .type(ADDED)
                         .messageKey(KEY_CLASS_INTERFACE_ADDED)
                         .messageArg(CLASSNAME)
                         .messageArg(JAVA_IO_SERIALIZABLE)
@@ -212,18 +217,86 @@ public class ClassDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.REMOVED)
+                        .severity(ERROR)
+                        .type(REMOVED)
                         .messageKey(KEY_CLASS_INTERFACE_REMOVED)
                         .messageArg(CLASSNAME)
                         .messageArg(JAVA_IO_CLONEABLE)
                         .build(),
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.ADDED)
+                        .severity(ERROR)
+                        .type(ADDED)
                         .messageKey(KEY_CLASS_INTERFACE_ADDED)
                         .messageArg(CLASSNAME)
                         .messageArg(JAVA_IO_CLOSEABLE)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-added",
+                newClass()
+                    .name(CLASSNAME)
+                    .build(),
+                newClass()
+                    .name(CLASSNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_CLASS_ANNOTATION_ADDED)
+                        .messageArg(CLASSNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-removed",
+                newClass()
+                    .name(CLASSNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                newClass()
+                    .name(CLASSNAME)
+                    .build(),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_CLASS_ANNOTATION_REMOVED)
+                        .messageArg(CLASSNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-modified",
+                newClass()
+                    .name(CLASSNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                newClass()
+                    .name(CLASSNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_B).build()),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_CLASS_ANNOTATION_REMOVED)
+                        .messageArg(CLASSNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build(),
+                    diff()
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_CLASS_ANNOTATION_ADDED)
+                        .messageArg(CLASSNAME)
+                        .messageArg("@" + ANNOTATION_B)
                         .build()
                 )
             }

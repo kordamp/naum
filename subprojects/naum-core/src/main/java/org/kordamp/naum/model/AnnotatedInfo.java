@@ -32,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 @ToString(exclude = "contentHash")
-public abstract class AnnotatedInfo implements Comparable<AnnotatedInfo> {
+public abstract class AnnotatedInfo<S extends AnnotatedInfo<S>> implements Comparable<S> {
     protected static final String[] EMPTY = new String[0];
 
     @Getter
@@ -42,15 +42,20 @@ public abstract class AnnotatedInfo implements Comparable<AnnotatedInfo> {
 
     private String contentHash;
 
+    protected final S self() {
+        return (S) this;
+    }
+
     @Override
     public int compareTo(AnnotatedInfo o) {
         if (o == null) { return -1; }
         return name.compareTo(o.name);
     }
 
-    public void addToAnnotations(AnnotationInfo annotation) {
+    public S addToAnnotations(AnnotationInfo annotation) {
         annotations.add(annotation);
         Collections.sort(annotations);
+        return self();
     }
 
     public abstract String getContent();

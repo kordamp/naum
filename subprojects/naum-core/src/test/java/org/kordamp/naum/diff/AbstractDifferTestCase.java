@@ -13,27 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.naum.model;
-
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+package org.kordamp.naum.diff;
 
 /**
  * @author Andres Almiray
  */
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
-public abstract class MemberInfo<S extends MemberInfo<S>> extends AnnotatedInfo<S> {
-    @Getter
-    private final int modifiers;
-
-    protected MemberInfo(String name, int modifiers) {
-        super(name);
-        this.modifiers = modifiers;
-    }
-
-    public static boolean isInnerClass(MemberInfo member) {
-        return member.getName().contains("$");
-    }
+public abstract class AbstractDifferTestCase {
+    public static final String JAVA_LANG_OBJECT = "java.lang.Object";
+    public static final String JAVA_LANG_RUNTIMEEXCEPTION = "java.lang.RuntimeException";
+    public static final String JAVA_LANG_ILLEGALARGUMENTEXCEPTION = "java.lang.IllegalArgumentException";
+    public static final String ANNOTATION_A = "A";
+    public static final String ANNOTATION_B = "B";
 }

@@ -31,7 +31,7 @@ import java.util.List;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class PackageInfo extends AnnotatedInfo {
+public class PackageInfo extends AnnotatedInfo<PackageInfo> {
     private final List<InnerClassInfo> classes = new ArrayList<>();
 
     private PackageInfo(String name) {
@@ -43,9 +43,10 @@ public class PackageInfo extends AnnotatedInfo {
         return new PackageInfo(name.replace('/', '.'));
     }
 
-    public void addToClasses(InnerClassInfo klass) {
+    public PackageInfo addToClasses(InnerClassInfo klass) {
         classes.add(klass);
         Collections.sort(classes);
+        return this;
     }
 
     @Override

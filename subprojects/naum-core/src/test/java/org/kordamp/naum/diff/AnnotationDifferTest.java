@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kordamp.naum.diff;
 
 import junitparams.JUnitParamsRunner;
@@ -29,12 +28,15 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.kordamp.naum.diff.AnnotationDiffer.KEY_ANNOTATION_ANNOTATION_ADDED;
+import static org.kordamp.naum.diff.AnnotationDiffer.KEY_ANNOTATION_ANNOTATION_REMOVED;
 import static org.kordamp.naum.diff.AnnotationDiffer.KEY_ANNOTATION_VALUE_ADDED;
 import static org.kordamp.naum.diff.AnnotationDiffer.KEY_ANNOTATION_VALUE_MODIFIED;
 import static org.kordamp.naum.diff.AnnotationDiffer.KEY_ANNOTATION_VALUE_REMOVED;
 import static org.kordamp.naum.diff.Diff.Severity.ERROR;
 import static org.kordamp.naum.diff.Diff.Type.ADDED;
 import static org.kordamp.naum.diff.Diff.Type.MODIFIED;
+import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 import static org.kordamp.naum.diff.Diff.diff;
 import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
 
@@ -43,8 +45,7 @@ import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
  * @author Stephan Classen
  */
 @RunWith(JUnitParamsRunner.class)
-public class AnnotationDifferTest {
-
+public class AnnotationDifferTest extends AbstractDifferTestCase {
     private static final String ANNOTATIONNAME = "annotationName";
     private static final String VALUENAME = "valueName";
     private static final String VALUE1 = "value1";
@@ -63,7 +64,7 @@ public class AnnotationDifferTest {
     private Object[] parameters() {
         return new Object[]{
             new Object[]{
-                "value added",
+                "value-added",
                 annotationInfo()
                     .name(ANNOTATIONNAME)
                     .build(),
@@ -83,7 +84,7 @@ public class AnnotationDifferTest {
             },
 
             new Object[]{
-                "value removed",
+                "value-removed",
                 annotationInfo()
                     .name(ANNOTATIONNAME)
                     .value(VALUENAME, "")
@@ -94,7 +95,7 @@ public class AnnotationDifferTest {
                 asList(
                     diff()
                         .severity(ERROR)
-                        .type(Diff.Type.REMOVED)
+                        .type(REMOVED)
                         .messageKey(KEY_ANNOTATION_VALUE_REMOVED)
                         .messageArg(ANNOTATIONNAME)
                         .messageArg(VALUENAME)
@@ -103,7 +104,7 @@ public class AnnotationDifferTest {
             },
 
             new Object[]{
-                "value chnaged",
+                "value-modified",
                 annotationInfo()
                     .name(ANNOTATIONNAME)
                     .value(VALUENAME, VALUE1)
@@ -123,6 +124,74 @@ public class AnnotationDifferTest {
                         .messageArg(VALUE1)
                         .messageArg(String.class.getName())
                         .messageArg(VALUE2)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-added",
+                annotationInfo()
+                    .name(ANNOTATIONNAME)
+                    .build(),
+                annotationInfo()
+                    .name(ANNOTATIONNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_ANNOTATION_ANNOTATION_ADDED)
+                        .messageArg(ANNOTATIONNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-removed",
+                annotationInfo()
+                    .name(ANNOTATIONNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                annotationInfo()
+                    .name(ANNOTATIONNAME)
+                    .build(),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_ANNOTATION_ANNOTATION_REMOVED)
+                        .messageArg(ANNOTATIONNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-modified",
+                annotationInfo()
+                    .name(ANNOTATIONNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                annotationInfo()
+                    .name(ANNOTATIONNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_B).build()),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_ANNOTATION_ANNOTATION_REMOVED)
+                        .messageArg(ANNOTATIONNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build(),
+                    diff()
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_ANNOTATION_ANNOTATION_ADDED)
+                        .messageArg(ANNOTATIONNAME)
+                        .messageArg("@" + ANNOTATION_B)
                         .build()
                 )
             }

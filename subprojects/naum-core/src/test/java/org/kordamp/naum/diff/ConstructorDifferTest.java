@@ -29,11 +29,18 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.kordamp.naum.diff.ConstructorDiffer.KEY_CONSTRUCTOR_ANNOTATION_ADDED;
+import static org.kordamp.naum.diff.ConstructorDiffer.KEY_CONSTRUCTOR_ANNOTATION_REMOVED;
 import static org.kordamp.naum.diff.ConstructorDiffer.KEY_CONSTRUCTOR_EXCEPTION_ADDED;
 import static org.kordamp.naum.diff.ConstructorDiffer.KEY_CONSTRUCTOR_EXCEPTION_REMOVED;
 import static org.kordamp.naum.diff.ConstructorDiffer.KEY_CONSTRUCTOR_MODIFIERS_MODIFIED;
 import static org.kordamp.naum.diff.ConstructorDiffer.constructorDiffer;
+import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Type.ADDED;
+import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 import static org.kordamp.naum.diff.Diff.diff;
+import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
+import static org.kordamp.naum.model.ConstructorInfo.NAME;
 import static org.kordamp.naum.model.ConstructorInfo.constructorInfo;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
@@ -42,10 +49,7 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
  * @author Andres Almiray
  */
 @RunWith(JUnitParamsRunner.class)
-public class ConstructorDifferTest {
-    private static final String JAVA_LANG_RUNTIMEEXCEPTION = "java.lang.RuntimeException";
-    private static final String JAVA_LANG_ILLEGALARGUMENTEXCEPTION = "java.lang.IllegalArgumentException";
-
+public class ConstructorDifferTest extends AbstractDifferTestCase {
     @Test
     @Parameters(method = "parameters")
     @TestCaseName("{constructor}[{index}] - {0}")
@@ -68,7 +72,7 @@ public class ConstructorDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
+                        .severity(ERROR)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_CONSTRUCTOR_MODIFIERS_MODIFIED)
                         .messageArg(ConstructorInfo.NAME)
@@ -89,8 +93,8 @@ public class ConstructorDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.ADDED)
+                        .severity(ERROR)
+                        .type(ADDED)
                         .messageKey(KEY_CONSTRUCTOR_EXCEPTION_ADDED)
                         .messageArg(JAVA_LANG_RUNTIMEEXCEPTION)
                         .build()
@@ -98,7 +102,7 @@ public class ConstructorDifferTest {
             },
 
             new Object[]{
-                "exceptions-remove",
+                "exceptions-removed",
                 constructorInfo()
                     .exceptions(new String[]{JAVA_LANG_RUNTIMEEXCEPTION})
                     .build(),
@@ -106,8 +110,8 @@ public class ConstructorDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.REMOVED)
+                        .severity(ERROR)
+                        .type(REMOVED)
                         .messageKey(KEY_CONSTRUCTOR_EXCEPTION_REMOVED)
                         .messageArg(JAVA_LANG_RUNTIMEEXCEPTION)
                         .build()
@@ -124,16 +128,78 @@ public class ConstructorDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.REMOVED)
+                        .severity(ERROR)
+                        .type(REMOVED)
                         .messageKey(KEY_CONSTRUCTOR_EXCEPTION_REMOVED)
                         .messageArg(JAVA_LANG_RUNTIMEEXCEPTION)
                         .build(),
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.ADDED)
+                        .severity(ERROR)
+                        .type(ADDED)
                         .messageKey(KEY_CONSTRUCTOR_EXCEPTION_ADDED)
                         .messageArg(JAVA_LANG_ILLEGALARGUMENTEXCEPTION)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-added",
+                constructorInfo()
+                    .build(),
+                constructorInfo()
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_CONSTRUCTOR_ANNOTATION_ADDED)
+                        .messageArg(NAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-removed",
+                constructorInfo()
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                constructorInfo()
+                    .build(),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_CONSTRUCTOR_ANNOTATION_REMOVED)
+                        .messageArg(NAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-modified",
+                constructorInfo()
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                constructorInfo()
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_B).build()),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_CONSTRUCTOR_ANNOTATION_REMOVED)
+                        .messageArg(NAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build(),
+                    diff()
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_CONSTRUCTOR_ANNOTATION_ADDED)
+                        .messageArg(NAME)
+                        .messageArg("@" + ANNOTATION_B)
                         .build()
                 )
             }

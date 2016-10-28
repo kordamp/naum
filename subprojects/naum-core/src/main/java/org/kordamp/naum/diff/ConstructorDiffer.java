@@ -40,6 +40,8 @@ public class ConstructorDiffer extends AbstractMemberDiffer<ConstructorInfo> {
     public static final String KEY_CONSTRUCTOR_TYPE_MODIFIED = "constructor.type.modified";
     public static final String KEY_CONSTRUCTOR_EXCEPTION_REMOVED = "constructor.exception.removed";
     public static final String KEY_CONSTRUCTOR_EXCEPTION_ADDED = "constructor.exception.added";
+    public static final String KEY_CONSTRUCTOR_ANNOTATION_REMOVED = "constructor.annotation.removed";
+    public static final String KEY_CONSTRUCTOR_ANNOTATION_ADDED = "constructor.annotation.added";
 
     private final ConstructorInfo previous;
     private final ConstructorInfo next;
@@ -61,6 +63,7 @@ public class ConstructorDiffer extends AbstractMemberDiffer<ConstructorInfo> {
         checkExceptions(list);
 
         // 4. annotations
+        checkAnnotations(list, "constructor");
 
         return list;
     }

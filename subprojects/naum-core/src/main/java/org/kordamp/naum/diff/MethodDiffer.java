@@ -39,6 +39,8 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
     public static final String KEY_METHOD_TYPE_MODIFIED = "method.type.modified";
     public static final String KEY_METHOD_EXCEPTION_REMOVED = "method.exception.removed";
     public static final String KEY_METHOD_EXCEPTION_ADDED = "method.exception.added";
+    public static final String KEY_METHOD_ANNOTATION_REMOVED = "method.annotation.removed";
+    public static final String KEY_METHOD_ANNOTATION_ADDED = "method.annotation.added";
 
     private final MethodInfo previous;
     private final MethodInfo next;
@@ -65,6 +67,7 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
         checkExceptions(list);
 
         // 6. annotations
+        checkAnnotations(list, "method");
 
         return list;
     }

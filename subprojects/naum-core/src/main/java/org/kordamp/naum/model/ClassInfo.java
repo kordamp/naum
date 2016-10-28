@@ -42,7 +42,7 @@ import static org.objectweb.asm.Opcodes.ACC_SYNCHRONIZED;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class ClassInfo extends MemberInfo {
+public class ClassInfo extends MemberInfo<ClassInfo> {
     private static final String[] EMPTY_INTERFACES = new String[0];
 
     private final int version;
@@ -159,26 +159,30 @@ public class ClassInfo extends MemberInfo {
             .modifiers(visibilityAccess | ACC_ENUM | ACC_FINAL | ACC_SYNCHRONIZED);
     }
 
-    public void addToFields(FieldInfo field) {
+    public ClassInfo addToFields(FieldInfo field) {
         fields.add(field);
         if (!isEnum()) {
             Collections.sort(fields);
         }
+        return this;
     }
 
-    public void addToConstructors(ConstructorInfo constructor) {
+    public ClassInfo addToConstructors(ConstructorInfo constructor) {
         constructors.add(constructor);
         Collections.sort(constructors);
+        return this;
     }
 
-    public void addToMethods(MethodInfo method) {
+    public ClassInfo addToMethods(MethodInfo method) {
         methods.add(method);
         Collections.sort(methods);
+        return this;
     }
 
-    public void addToClasses(InnerClassInfo klass) {
+    public ClassInfo addToClasses(InnerClassInfo klass) {
         classes.add(klass);
         Collections.sort(classes);
+        return this;
     }
 
     @Override

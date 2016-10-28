@@ -29,12 +29,18 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Type.ADDED;
+import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 import static org.kordamp.naum.diff.Diff.diff;
+import static org.kordamp.naum.diff.MethodDiffer.KEY_METHOD_ANNOTATION_ADDED;
+import static org.kordamp.naum.diff.MethodDiffer.KEY_METHOD_ANNOTATION_REMOVED;
 import static org.kordamp.naum.diff.MethodDiffer.KEY_METHOD_EXCEPTION_ADDED;
 import static org.kordamp.naum.diff.MethodDiffer.KEY_METHOD_EXCEPTION_REMOVED;
 import static org.kordamp.naum.diff.MethodDiffer.KEY_METHOD_MODIFIERS_MODIFIED;
 import static org.kordamp.naum.diff.MethodDiffer.KEY_METHOD_TYPE_MODIFIED;
 import static org.kordamp.naum.diff.MethodDiffer.methodDiffer;
+import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
 import static org.kordamp.naum.model.MethodInfo.methodInfo;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
@@ -43,12 +49,9 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
  * @author Andres Almiray
  */
 @RunWith(JUnitParamsRunner.class)
-public class MethodDifferTest {
+public class MethodDifferTest extends AbstractDifferTestCase {
     private static final String METHODNAME = "foo";
-    private static final String JAVA_LANG_OBJECT = "java.lang.Object";
     private static final String JAVA_LANG_INTEGER = "java.lang.Integer";
-    private static final String JAVA_LANG_RUNTIMEEXCEPTION = "java.lang.RuntimeException";
-    private static final String JAVA_LANG_ILLEGALARGUMENTEXCEPTION = "java.lang.IllegalArgumentException";
 
     @Test
     @Parameters(method = "parameters")
@@ -76,7 +79,7 @@ public class MethodDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
+                        .severity(ERROR)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_METHOD_MODIFIERS_MODIFIED)
                         .messageArg(METHODNAME)
@@ -100,7 +103,7 @@ public class MethodDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
+                        .severity(ERROR)
                         .type(Diff.Type.MODIFIED)
                         .messageKey(KEY_METHOD_TYPE_MODIFIED)
                         .messageArg(METHODNAME)
@@ -123,8 +126,8 @@ public class MethodDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.ADDED)
+                        .severity(ERROR)
+                        .type(ADDED)
                         .messageKey(KEY_METHOD_EXCEPTION_ADDED)
                         .messageArg(METHODNAME)
                         .messageArg(JAVA_LANG_RUNTIMEEXCEPTION)
@@ -133,7 +136,7 @@ public class MethodDifferTest {
             },
 
             new Object[]{
-                "exceptions-remove",
+                "exceptions-removed",
                 methodInfo()
                     .name(METHODNAME)
                     .returnType(JAVA_LANG_OBJECT)
@@ -145,8 +148,8 @@ public class MethodDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.REMOVED)
+                        .severity(ERROR)
+                        .type(REMOVED)
                         .messageKey(KEY_METHOD_EXCEPTION_REMOVED)
                         .messageArg(METHODNAME)
                         .messageArg(JAVA_LANG_RUNTIMEEXCEPTION)
@@ -168,18 +171,86 @@ public class MethodDifferTest {
                     .build(),
                 asList(
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.REMOVED)
+                        .severity(ERROR)
+                        .type(REMOVED)
                         .messageKey(KEY_METHOD_EXCEPTION_REMOVED)
                         .messageArg(METHODNAME)
                         .messageArg(JAVA_LANG_RUNTIMEEXCEPTION)
                         .build(),
                     diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.ADDED)
+                        .severity(ERROR)
+                        .type(ADDED)
                         .messageKey(KEY_METHOD_EXCEPTION_ADDED)
                         .messageArg(METHODNAME)
                         .messageArg(JAVA_LANG_ILLEGALARGUMENTEXCEPTION)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-added",
+                methodInfo()
+                    .name(METHODNAME)
+                    .build(),
+                methodInfo()
+                    .name(METHODNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_METHOD_ANNOTATION_ADDED)
+                        .messageArg(METHODNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-removed",
+                methodInfo()
+                    .name(METHODNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                methodInfo()
+                    .name(METHODNAME)
+                    .build(),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_METHOD_ANNOTATION_REMOVED)
+                        .messageArg(METHODNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build()
+                )
+            },
+
+            new Object[]{
+                "annotations-modified",
+                methodInfo()
+                    .name(METHODNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
+                methodInfo()
+                    .name(METHODNAME)
+                    .build()
+                    .addToAnnotations(annotationInfo().name(ANNOTATION_B).build()),
+                asList(
+                    diff()
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_METHOD_ANNOTATION_REMOVED)
+                        .messageArg(METHODNAME)
+                        .messageArg("@" + ANNOTATION_A)
+                        .build(),
+                    diff()
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_METHOD_ANNOTATION_ADDED)
+                        .messageArg(METHODNAME)
+                        .messageArg("@" + ANNOTATION_B)
                         .build()
                 )
             }

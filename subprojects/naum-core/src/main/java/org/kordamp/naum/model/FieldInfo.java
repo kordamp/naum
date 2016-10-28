@@ -33,7 +33,7 @@ import static org.kordamp.naum.model.Modifiers.isStatic;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class FieldInfo extends MemberInfo {
+public class FieldInfo extends MemberInfo<FieldInfo> {
     private final String type;
     private final Object value;
 
