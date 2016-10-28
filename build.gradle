@@ -104,3 +104,6 @@ task jacocoRootMergeReport(dependsOn: jacocoRootMerge, type: JacocoReport) {
     }
 }
 
+coveralls {
+    sourceDirs = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs).files.absolutePath
+}

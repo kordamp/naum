@@ -1,4 +1,4 @@
-= naum
+= Naum
 :linkattrs:
 :project-owner: aalmiray
 :project-repo: kordamp
