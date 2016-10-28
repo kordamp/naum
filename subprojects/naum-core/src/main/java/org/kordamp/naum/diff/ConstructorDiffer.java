@@ -37,7 +37,6 @@ import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 @EqualsAndHashCode(callSuper = true)
 public class ConstructorDiffer extends AbstractMemberDiffer<ConstructorInfo> {
     public static final String KEY_CONSTRUCTOR_MODIFIERS_MODIFIED = "constructor.modifiers.modified";
-    public static final String KEY_CONSTRUCTOR_TYPE_MODIFIED = "constructor.type.modified";
     public static final String KEY_CONSTRUCTOR_EXCEPTION_REMOVED = "constructor.exception.removed";
     public static final String KEY_CONSTRUCTOR_EXCEPTION_ADDED = "constructor.exception.added";
     public static final String KEY_CONSTRUCTOR_ANNOTATION_REMOVED = "constructor.annotation.removed";
