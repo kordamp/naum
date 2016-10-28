@@ -26,6 +26,8 @@ import java.util.Set;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 
 /**
  * @author Andres Almiray
@@ -51,8 +53,8 @@ public abstract class AbstractDiffer<T extends AnnotatedInfo> implements Differ<
         for (AnnotationInfo a : p.values()) {
             list.add(
                 Diff.diff()
-                    .severity(Diff.Severity.ERROR)
-                    .type(Diff.Type.REMOVED)
+                    .severity(ERROR)
+                    .type(REMOVED)
                     .messageKey("class.annotation.removed")
                     .messageArg(a)
                     .build());
@@ -61,7 +63,7 @@ public abstract class AbstractDiffer<T extends AnnotatedInfo> implements Differ<
         for (AnnotationInfo a : n.values()) {
             list.add(
                 Diff.diff()
-                    .severity(Diff.Severity.ERROR)
+                    .severity(ERROR)
                     .type(Diff.Type.ADDED)
                     .messageKey("class.annotation.added")
                     .messageArg(a)

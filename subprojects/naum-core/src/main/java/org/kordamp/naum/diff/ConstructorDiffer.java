@@ -26,6 +26,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Type.ADDED;
+import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 
 /**
  * @author Andres Almiray
@@ -81,9 +84,9 @@ public class ConstructorDiffer extends AbstractMemberDiffer<ConstructorInfo> {
             for (String e : p) {
                 list.add(
                     Diff.diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.REMOVED)
-                        .messageKey("constructor.exception.removed")
+                        .severity(ERROR)
+                        .type(REMOVED)
+                        .messageKey(KEY_CONSTRUCTOR_EXCEPTION_REMOVED)
                         .messageArg(e)
                         .build());
             }
@@ -91,9 +94,9 @@ public class ConstructorDiffer extends AbstractMemberDiffer<ConstructorInfo> {
             for (String e : n) {
                 list.add(
                     Diff.diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.ADDED)
-                        .messageKey("constructor.exception.added")
+                        .severity(ERROR)
+                        .type(ADDED)
+                        .messageKey(KEY_CONSTRUCTOR_EXCEPTION_ADDED)
                         .messageArg(e)
                         .build());
             }

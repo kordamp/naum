@@ -17,6 +17,8 @@ package org.kordamp.naum.diff;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections4.CollectionUtils;
+import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.model.FieldInfo;
 
 import java.util.ArrayList;
@@ -24,9 +26,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Type.MODIFIED;
+
 /**
  * @author Andres Almiray
- * @author Jcohen Theodorou
+ * @author Jochen Theodorou
  */
 @Data(staticConstructor = "fieldDiffer")
 @EqualsAndHashCode(callSuper = true)
@@ -56,15 +61,16 @@ public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
         checkValue(list);
 
         // 4. annotations
+        checkAnnotations(list);
 
         return list;
     }
 
     private boolean isEquals(Object a, Object b) {
-        if (a==null && b==null) {
+        if (a == null && b == null) {
             return true;
         }
-        if (a==null ^ b==null) {
+        if (a == null ^ b == null) {
             return false;
         }
         return a.equals(b);
@@ -74,10 +80,10 @@ public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
         if (!isEquals(previous.getValue(), next.getValue())) {
             list.add(
                 Diff.diff()
-                    .severity(Diff.Severity.ERROR)
-                    .type(Diff.Type.MODIFIED)
+                    .severity(ERROR)
+                    .type(MODIFIED)
                     .messageKey(KEY_FIELD_VALUE_MODIFIED)
-                    .messageArg(previous.getName())
+                    .messageArg(getElementName())
                     .messageArg(previous.getValue())
                     .messageArg(next.getValue())
                     .build());
@@ -88,13 +94,22 @@ public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
         if (!previous.getType().equals(next.getType())) {
             list.add(
                 Diff.diff()
-                    .severity(Diff.Severity.ERROR)
-                    .type(Diff.Type.MODIFIED)
+                    .severity(ERROR)
+                    .type(MODIFIED)
                     .messageKey(KEY_FIELD_TYPE_MODIFIED)
-                    .messageArg(previous.getName())
+                    .messageArg(getElementName())
                     .messageArg(previous.getType())
                     .messageArg(next.getType())
                     .build());
         }
+    }
+
+    private void checkAnnotations(List<Diff> list) {
+        List<AnnotationInfo> p = previous.getAnnotations();
+        List<AnnotationInfo> n = next.getAnnotations();
+
+        Collection<AnnotationInfo> removed = CollectionUtils.subtract(p, n);
+        Collection<AnnotationInfo> added = CollectionUtils.subtract(n, p);
+        Collection<AnnotationInfo> same = CollectionUtils.intersection(n, p);
     }
 }

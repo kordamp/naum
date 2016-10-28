@@ -55,7 +55,6 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
         // 1. values
         checkValues(list);
 
-
         // 2. enumValues
 
         // 3. annotations
@@ -76,7 +75,7 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
                 .severity(ERROR)
                 .type(ADDED)
                 .messageKey(KEY_ANNOTATION_VALUE_ADDED)
-                .messageArg(getAnnotationName())
+                .messageArg(getElementName())
                 .messageArg(key)
                 .build()
             );
@@ -86,7 +85,7 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
                 .severity(ERROR)
                 .type(Diff.Type.REMOVED)
                 .messageKey(KEY_ANNOTATION_VALUE_REMOVED)
-                .messageArg(getAnnotationName())
+                .messageArg(getElementName())
                 .messageArg(key)
                 .build()
             );
@@ -100,7 +99,7 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
                         .severity(ERROR)
                         .type(MODIFIED)
                         .messageKey(KEY_ANNOTATION_VALUE_MODIFIED)
-                        .messageArg(getAnnotationName())
+                        .messageArg(getElementName())
                         .messageArg(key)
                         .messageArg(prevValue.getClass().getName())
                         .messageArg(prevValue)
@@ -110,9 +109,5 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
                 );
             }
         }
-    }
-
-    private String getAnnotationName() {
-        return previous.getName();
     }
 }

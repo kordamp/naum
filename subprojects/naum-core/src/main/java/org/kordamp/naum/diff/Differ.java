@@ -28,4 +28,8 @@ public interface Differ<T extends AnnotatedInfo> {
     T getNext();
 
     Collection<Diff> diff();
+
+    default String getElementName() {
+        return getPrevious().getName();
+    }
 }

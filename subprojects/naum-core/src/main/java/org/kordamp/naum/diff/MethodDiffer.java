@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Type.MODIFIED;
 
 /**
  * @author Andres Almiray
@@ -71,10 +73,10 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
         if (!previous.getReturnType().equals(next.getReturnType())) {
             list.add(
                 Diff.diff()
-                    .severity(Diff.Severity.ERROR)
-                    .type(Diff.Type.MODIFIED)
+                    .severity(ERROR)
+                    .type(MODIFIED)
                     .messageKey(KEY_METHOD_TYPE_MODIFIED)
-                    .messageArg(previous.getName())
+                    .messageArg(getElementName())
                     .messageArg(previous.getReturnType())
                     .messageArg(next.getReturnType())
                     .build());
@@ -100,10 +102,10 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
             for (String e : p) {
                 list.add(
                     Diff.diff()
-                        .severity(Diff.Severity.ERROR)
+                        .severity(ERROR)
                         .type(Diff.Type.REMOVED)
                         .messageKey(KEY_METHOD_EXCEPTION_REMOVED)
-                        .messageArg(previous.getName())
+                        .messageArg(getElementName())
                         .messageArg(e)
                         .build());
             }
@@ -111,10 +113,10 @@ public class MethodDiffer extends AbstractMemberDiffer<MethodInfo> {
             for (String e : n) {
                 list.add(
                     Diff.diff()
-                        .severity(Diff.Severity.ERROR)
+                        .severity(ERROR)
                         .type(Diff.Type.ADDED)
                         .messageKey(KEY_METHOD_EXCEPTION_ADDED)
-                        .messageArg(previous.getName())
+                        .messageArg(getElementName())
                         .messageArg(e)
                         .build());
             }

@@ -32,6 +32,11 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Severity.WARNING;
+import static org.kordamp.naum.diff.Diff.Type.ADDED;
+import static org.kordamp.naum.diff.Diff.Type.MODIFIED;
+import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 
 /**
  * @author Andres Almiray
@@ -94,10 +99,10 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
         if (previous.getType() != next.getType()) {
             list.add(
                 Diff.diff()
-                    .severity(Diff.Severity.ERROR)
-                    .type(Diff.Type.MODIFIED)
+                    .severity(ERROR)
+                    .type(MODIFIED)
                     .messageKey(KEY_CLASS_TYPE_MODIFIED)
-                    .messageArg(previous.getName())
+                    .messageArg(getElementName())
                     .messageArg(previous.getType().name().toLowerCase())
                     .messageArg(next.getType().name().toLowerCase())
                     .build());
@@ -108,10 +113,10 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
         if (previous.getVersion() != next.getVersion()) {
             list.add(
                 Diff.diff()
-                    .severity(Diff.Severity.WARNING)
-                    .type(Diff.Type.MODIFIED)
+                    .severity(WARNING)
+                    .type(MODIFIED)
                     .messageKey(KEY_CLASS_VERSION_MODIFIED)
-                    .messageArg(previous.getName())
+                    .messageArg(getElementName())
                     .messageArg(previous.getVersion())
                     .messageArg(next.getVersion())
                     .build());
@@ -122,10 +127,10 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
         if (!previous.getSuperclass().equals(next.getSuperclass())) {
             list.add(
                 Diff.diff()
-                    .severity(Diff.Severity.ERROR)
-                    .type(Diff.Type.MODIFIED)
+                    .severity(ERROR)
+                    .type(MODIFIED)
                     .messageKey(KEY_CLASS_SUPERCLASS_MODIFIED)
-                    .messageArg(previous.getName())
+                    .messageArg(getElementName())
                     .messageArg(previous.getSuperclass())
                     .messageArg(next.getSuperclass())
                     .build());
@@ -151,10 +156,10 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
             for (String i : p) {
                 list.add(
                     Diff.diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.REMOVED)
+                        .severity(ERROR)
+                        .type(REMOVED)
                         .messageKey(KEY_CLASS_INTERFACE_REMOVED)
-                        .messageArg(previous.getName())
+                        .messageArg(getElementName())
                         .messageArg(i)
                         .build());
             }
@@ -162,10 +167,10 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
             for (String i : n) {
                 list.add(
                     Diff.diff()
-                        .severity(Diff.Severity.ERROR)
-                        .type(Diff.Type.ADDED)
+                        .severity(ERROR)
+                        .type(ADDED)
                         .messageKey(KEY_CLASS_INTERFACE_ADDED)
-                        .messageArg(previous.getName())
+                        .messageArg(getElementName())
                         .messageArg(i)
                         .build());
             }
@@ -204,10 +209,10 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
         for (InnerClassInfo c : p.values()) {
             list.add(
                 Diff.diff()
-                    .severity(Diff.Severity.ERROR)
-                    .type(Diff.Type.REMOVED)
+                    .severity(ERROR)
+                    .type(REMOVED)
                     .messageKey(KEY_CLASS_INNERCLASS_REMOVED)
-                    .messageArg(previous.getName())
+                    .messageArg(getElementName())
                     .messageArg(c)
                     .build());
         }
@@ -215,10 +220,10 @@ public class ClassDiffer extends AbstractMemberDiffer<ClassInfo> {
         for (InnerClassInfo c : n.values()) {
             list.add(
                 Diff.diff()
-                    .severity(Diff.Severity.ERROR)
-                    .type(Diff.Type.ADDED)
+                    .severity(ERROR)
+                    .type(ADDED)
                     .messageKey(KEY_CLASS_INNERCLASS_ADDED)
-                    .messageArg(previous.getName())
+                    .messageArg(getElementName())
                     .messageArg(c)
                     .build());
         }

@@ -36,7 +36,7 @@ public abstract class AbstractMemberDiffer<T extends MemberInfo> extends Abstrac
                     .severity(Diff.Severity.ERROR)
                     .type(Diff.Type.MODIFIED)
                     .messageKey(keyPrefix + ".modifiers.modified")
-                    .messageArg(previous.getName())
+                    .messageArg(getElementName())
                     .messageArg(modifiersAsString(previous.getModifiers()))
                     .messageArg(previous.getModifiers())
                     .messageArg(modifiersAsString(next.getModifiers()))
