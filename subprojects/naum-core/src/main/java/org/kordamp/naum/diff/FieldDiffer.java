@@ -17,8 +17,6 @@ package org.kordamp.naum.diff;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.collections4.CollectionUtils;
-import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.model.FieldInfo;
 
 import java.util.ArrayList;
@@ -39,6 +37,8 @@ public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
     public static final String KEY_FIELD_MODIFIERS_MODIFIED = "field.modifiers.modified";
     public static final String KEY_FIELD_TYPE_MODIFIED = "field.type.modified";
     public static final String KEY_FIELD_VALUE_MODIFIED = "field.value.modified";
+    public static final String KEY_FIELD_ANNOATION_REMOVED = "field.annotation.removed";
+    public static final String KEY_FIELD_ANNOATION_ADDED = "field.annotation.added";
 
     private final FieldInfo previous;
     private final FieldInfo next;
@@ -61,7 +61,7 @@ public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
         checkValue(list);
 
         // 4. annotations
-        checkAnnotations(list);
+        checkAnnotations(list, "field");
 
         return list;
     }
@@ -102,14 +102,5 @@ public class FieldDiffer extends AbstractMemberDiffer<FieldInfo> {
                     .messageArg(next.getType())
                     .build());
         }
-    }
-
-    private void checkAnnotations(List<Diff> list) {
-        List<AnnotationInfo> p = previous.getAnnotations();
-        List<AnnotationInfo> n = next.getAnnotations();
-
-        Collection<AnnotationInfo> removed = CollectionUtils.subtract(p, n);
-        Collection<AnnotationInfo> added = CollectionUtils.subtract(n, p);
-        Collection<AnnotationInfo> same = CollectionUtils.intersection(n, p);
     }
 }

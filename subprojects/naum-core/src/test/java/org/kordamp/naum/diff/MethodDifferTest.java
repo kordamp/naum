@@ -110,7 +110,7 @@ public class MethodDifferTest {
                 )
             },
 
-            new Object[] {
+            new Object[]{
                 "exceptions-added",
                 methodInfo()
                     .name(METHODNAME)
@@ -132,7 +132,7 @@ public class MethodDifferTest {
                 )
             },
 
-            new Object[] {
+            new Object[]{
                 "exceptions-remove",
                 methodInfo()
                     .name(METHODNAME)
@@ -154,7 +154,7 @@ public class MethodDifferTest {
                 )
             },
 
-            new Object[] {
+            new Object[]{
                 "exceptions-modified",
                 methodInfo()
                     .name(METHODNAME)

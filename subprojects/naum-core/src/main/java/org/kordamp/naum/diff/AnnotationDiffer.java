@@ -29,6 +29,7 @@ import java.util.Set;
 import static org.kordamp.naum.diff.Diff.Severity.ERROR;
 import static org.kordamp.naum.diff.Diff.Type.ADDED;
 import static org.kordamp.naum.diff.Diff.Type.MODIFIED;
+import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 
 /**
  * @author Andres Almiray
@@ -83,7 +84,7 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
         for (String key : removedKeys) {
             inList.add(Diff.diff()
                 .severity(ERROR)
-                .type(Diff.Type.REMOVED)
+                .type(REMOVED)
                 .messageKey(KEY_ANNOTATION_VALUE_REMOVED)
                 .messageArg(getElementName())
                 .messageArg(key)

@@ -50,6 +50,8 @@ public class FieldDifferTest {
     private static final String JAVA_LANG_OBJECT = "java.lang.Object";
     private static final String JAVA_LANG_INTEGER = "java.lang.Integer";
     private static final String OBJECT_FIELD_VALUE = "value";
+    private static final String ANNOATION_A = "A";
+    private static final String ANNOATION_B = "B";
 
     @Test
     @Parameters(method = "parameters")
@@ -111,7 +113,7 @@ public class FieldDifferTest {
                 )
             },
 
-            new Object[] {
+            new Object[]{
                 "value",
                 fieldInfo()
                     .name(FIELDNAME)

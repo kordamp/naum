@@ -15,64 +15,52 @@
  */
 package org.kordamp.naum.diff;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.kordamp.naum.model.AnnotatedInfo;
 import org.kordamp.naum.model.AnnotationInfo;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
 import static org.kordamp.naum.diff.Diff.Severity.ERROR;
+import static org.kordamp.naum.diff.Diff.Type.ADDED;
 import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 
 /**
  * @author Andres Almiray
  */
 public abstract class AbstractDiffer<T extends AnnotatedInfo> implements Differ<T> {
-    protected void diffAnnotations(Collection<Diff> list) {
-        Map<String, AnnotationInfo> p = annotationsAsMap(getPrevious().getAnnotations());
-        Map<String, AnnotationInfo> n = annotationsAsMap(getNext().getAnnotations());
-
-        // 1. remove equal elements
-        Set<String> hashes = new HashSet<>(p.keySet());
-        hashes.forEach(hash -> {
-            if (n.containsKey(hash)) {
-                p.remove(hash);
-                n.remove(hash);
-            }
-        });
-
-        // search for p.name == n.name
-        // matches mean updates were made to that element
-
-        // anything left in p was removed
-        for (AnnotationInfo a : p.values()) {
-            list.add(
-                Diff.diff()
-                    .severity(ERROR)
-                    .type(REMOVED)
-                    .messageKey("class.annotation.removed")
-                    .messageArg(a)
-                    .build());
-        }
-        // anything left in n was added
-        for (AnnotationInfo a : n.values()) {
-            list.add(
-                Diff.diff()
-                    .severity(ERROR)
-                    .type(Diff.Type.ADDED)
-                    .messageKey("class.annotation.added")
-                    .messageArg(a)
-                    .build());
-        }
+    protected void checkAnnotations(Collection<Diff> list, String keyPrefix) {
+        checkAnnotations(getPrevious(), getNext(), list, keyPrefix);
     }
 
-    protected Map<String, AnnotationInfo> annotationsAsMap(List<AnnotationInfo> annotations) {
-        return annotations.stream()
-            .collect(toMap(AnnotationInfo::getContentHash, identity()));
+    protected void checkAnnotations(T previous, T next, Collection<Diff> list, String keyPrefix) {
+        List<AnnotationInfo> p = previous.getAnnotations();
+        List<AnnotationInfo> n = next.getAnnotations();
+
+        Collection<AnnotationInfo> removed = CollectionUtils.subtract(p, n);
+        Collection<AnnotationInfo> added = CollectionUtils.subtract(n, p);
+
+        for (AnnotationInfo a : added) {
+            list.add(Diff.diff()
+                .severity(ERROR)
+                .type(ADDED)
+                .messageKey(keyPrefix + ".annotation.added")
+                .messageArg(getElementName())
+                .messageArg("@" + a.getName())
+                .build()
+            );
+        }
+
+        for (AnnotationInfo a : removed) {
+            list.add(Diff.diff()
+                .severity(ERROR)
+                .type(REMOVED)
+                .messageKey(keyPrefix + ".annotation.removed")
+                .messageArg(getElementName())
+                .messageArg("@" + a.getName())
+                .build()
+            );
+        }
     }
 }
