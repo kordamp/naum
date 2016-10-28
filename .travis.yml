@@ -2,4 +2,4 @@ language: java
 script: ./gradlew clean build
 jdk: oraclejdk8
 env: TERM=dumb
-# after_success: ./gradlew coveralls
+after_success: ./gradlew coveralls
