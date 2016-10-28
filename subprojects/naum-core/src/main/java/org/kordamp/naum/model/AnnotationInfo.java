@@ -125,6 +125,10 @@ public class AnnotationInfo extends AnnotatedInfo<AnnotationInfo> {
         return b.toString();
     }
 
+    public static EnumEntry newEnumEntry(String type, String value) {
+        return new EnumEntry(type, value);
+    }
+
     @Data
     public static class EnumEntry {
         private final String type;
