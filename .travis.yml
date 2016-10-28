@@ -1,5 +1,5 @@
 language: java
-script: ./gradlew clean build
+script: ./gradlew clean build jacocoRootMergeReport
 jdk: oraclejdk8
 env: TERM=dumb
 after_success: ./gradlew coveralls

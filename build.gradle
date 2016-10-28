@@ -32,8 +32,8 @@ ext {
     buildRevision = versioning.info.commit
     buildCreatedBy = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
     projectsWithCoverage = []
-    baseJaCocoDir = "${buildDir}/reports/jacoco/test/"
-    jacocoMergeExecFile = "${baseJaCocoDir}jacocoTestReport.exec"
+    baseJaCocoDir = "${buildDir}/reports/jacoco/test"
+    jacocoMergeExecFile = "${baseJaCocoDir}/jacocoTestReport.exec"
     jacocoMergeReportHTMLFile = "${baseJaCocoDir}/html/"
     jacocoMergeReportXMLFile = "${baseJaCocoDir}/jacocoTestReport.xml"
 }
