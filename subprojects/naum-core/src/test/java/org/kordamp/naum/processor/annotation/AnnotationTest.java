@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kordamp.naum.processor.annotation;
 
 import org.junit.Test;
@@ -22,9 +21,10 @@ import org.kordamp.naum.processor.AbstractProcessorTest;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
+import static org.kordamp.naum.AnnotatedInfoMatcher.annotatedInfo;
 import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
 
 /**
@@ -41,30 +41,24 @@ public class AnnotationTest extends AbstractProcessorTest {
 
     @Test
     public void loadAndCheckPlainAnnotationWithRetentionClass() throws Exception {
-        final AnnotationInfo expectedAnnotation = annotationInfo().name(PlainClassAnnotation.class.getName()).build();
+        final AnnotationInfo annotation = annotationInfo().name(PlainClassAnnotation.class.getName()).build();
 
         loadAndCheckAnnotations(WithPlainClassAnno.class, (annotations) -> {
-            assertThat(annotations.size(), is(1));
-            AnnotationInfo actualAnnotation = annotations.get(0);
-            assertThat(expectedAnnotation.getContentHash(), equalTo(actualAnnotation.getContentHash()));
-            assertThat(expectedAnnotation, equalTo(actualAnnotation));
+            assertThat(annotations, contains(annotatedInfo(annotation)));
         });
     }
 
     @Test
     public void loadAndCheckPlainAnnotationWithRetentionRuntime() throws Exception {
-        final AnnotationInfo expectedAnnotation = annotationInfo().name(PlainRuntimeAnnotation.class.getName()).build();
+        final AnnotationInfo annotation = annotationInfo().name(PlainRuntimeAnnotation.class.getName()).build();
 
         loadAndCheckAnnotations(WithPlainRuntimeAnno.class, (annotations) -> {
-            assertThat(annotations.size(), is(1));
-            AnnotationInfo actualAnnotation = annotations.get(0);
-            assertThat(expectedAnnotation.getContentHash(), equalTo(actualAnnotation.getContentHash()));
-            assertThat(expectedAnnotation, equalTo(actualAnnotation));
+            assertThat(annotations, contains(annotatedInfo(annotation)));
         });
     }
 
     private void loadAndCheckAnnotations(Class<?> clazz, AnnotationChecks checks) throws Exception {
-        String targetClassPath = clazz.getCanonicalName().replaceAll("\\.", "/");
+        final String targetClassPath = clazz.getCanonicalName().replaceAll("\\.", "/");
         loadAndCheck(targetClassPath + ".class", (klass) -> {
             checks.check(klass.getAnnotations());
         });
