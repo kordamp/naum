@@ -55,6 +55,11 @@ allprojects {
 
 subprojects { subproj ->
     apply plugin: 'java'
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = rootProject.sourceCompatibility
+        targetCompatibility = rootProject.targetCompatibility
+    }
+
     apply from: rootProject.file('gradle/code-quality.gradle')
     apply plugin: 'info.solidsoft.pitest'
 
