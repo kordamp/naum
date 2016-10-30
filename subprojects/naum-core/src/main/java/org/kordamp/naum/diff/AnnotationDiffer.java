@@ -72,7 +72,7 @@ public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
         return list;
     }
 
-    private void checkValues(List<Diff> inList) {
+    private void checkValues(Collection<Diff> list) {
         Set<String> prevKeySet = previous.getValues().keySet();
         Set<String> nextKeySet = next.getValues().keySet();
 
@@ -81,7 +81,7 @@ public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
         Collection<String> sameKeys = CollectionUtils.intersection(nextKeySet, prevKeySet);
 
         for (String key : removedKeys) {
-            inList.add(Diff.diff()
+            list.add(Diff.diff()
                 .severity(ERROR)
                 .type(REMOVED)
                 .messageKey(KEY_ANNOTATION_VALUE_REMOVED)
@@ -92,7 +92,7 @@ public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
         }
 
         for (String key : addedKeys) {
-            inList.add(Diff.diff()
+            list.add(Diff.diff()
                 .severity(ERROR)
                 .type(ADDED)
                 .messageKey(KEY_ANNOTATION_VALUE_ADDED)
@@ -106,7 +106,7 @@ public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
             Object prevValue = previous.getValues().get(key);
             Object nextValue = next.getValues().get(key);
             if (!Objects.equals(prevValue, nextValue)) {
-                inList.add(
+                list.add(
                     Diff.diff()
                         .severity(ERROR)
                         .type(MODIFIED)
@@ -123,8 +123,7 @@ public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
         }
     }
 
-
-    private void checkEnumValues(List<Diff> inList) {
+    private void checkEnumValues(Collection<Diff> list) {
         Set<String> prevKeySet = previous.getEnumValues().keySet();
         Set<String> nextKeySet = next.getEnumValues().keySet();
 
@@ -133,7 +132,7 @@ public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
         Collection<String> sameKeys = CollectionUtils.intersection(nextKeySet, prevKeySet);
 
         for (String key : removedKeys) {
-            inList.add(Diff.diff()
+            list.add(Diff.diff()
                 .severity(ERROR)
                 .type(REMOVED)
                 .messageKey(KEY_ANNOTATION_ENUM_VALUE_REMOVED)
@@ -144,7 +143,7 @@ public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
         }
 
         for (String key : addedKeys) {
-            inList.add(Diff.diff()
+            list.add(Diff.diff()
                 .severity(ERROR)
                 .type(ADDED)
                 .messageKey(KEY_ANNOTATION_ENUM_VALUE_ADDED)
@@ -158,7 +157,7 @@ public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
             AnnotationInfo.EnumEntry prevValue = previous.getEnumValues().get(key);
             AnnotationInfo.EnumEntry nextValue = next.getEnumValues().get(key);
             if (!Objects.equals(prevValue, nextValue)) {
-                inList.add(
+                list.add(
                     Diff.diff()
                         .severity(ERROR)
                         .type(MODIFIED)

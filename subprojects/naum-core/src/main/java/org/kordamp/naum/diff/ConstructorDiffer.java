@@ -17,6 +17,7 @@ package org.kordamp.naum.diff;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kordamp.naum.model.ConstructorInfo;
 
 import java.util.ArrayList;
@@ -24,10 +25,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.kordamp.naum.diff.Diff.Severity.ERROR;
 import static org.kordamp.naum.diff.Diff.Type.ADDED;
+import static org.kordamp.naum.diff.Diff.Type.MODIFIED;
 import static org.kordamp.naum.diff.Diff.Type.REMOVED;
 
 /**
