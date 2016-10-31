@@ -17,7 +17,11 @@ package org.kordamp.naum.processor.annotation;
 
 import org.junit.Test;
 import org.kordamp.naum.model.AnnotationInfo;
+import org.kordamp.naum.model.AnnotationInfo.EnumEntry;
 import org.kordamp.naum.processor.AbstractProcessorTest;
+import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.CustomEnumValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.DefaultEnumValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.SomeEnum;
 import org.kordamp.naum.processor.annotation.WithRetentionClassAnnotation.PlainClassAnnotation;
 import org.kordamp.naum.processor.annotation.WithRetentionRuntimeAnnotation.PlainRuntimeAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.CustomStringValueAnnotation;
@@ -31,6 +35,8 @@ import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 import static org.kordamp.naum.AnnotatedInfoMatcher.annotatedInfo;
 import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
+import static org.kordamp.naum.model.AnnotationInfo.newEnumEntry;
+import static org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.SomeEnum.PIZZA;
 
 /**
  * @author Stephan Classen
@@ -70,6 +76,17 @@ public class AnnotationTest extends AbstractProcessorTest {
 
         loadAndCheckAnnotations(WithStringValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(emptyDefault), annotatedInfo(nonEmptyDefault)));
+        });
+    }
+
+    @Test
+    public void loadAndCheckWithEnumValueAnnotation() throws Exception {
+        final AnnotationInfo defaultEnum = annotationInfo().name(DefaultEnumValueAnnotation.class.getName()).build();
+        final EnumEntry enumValue = newEnumEntry(SomeEnum.class.getName(), PIZZA.name());
+        final AnnotationInfo customEnum = annotationInfo().name(CustomEnumValueAnnotation.class.getName()).enumValue("value", enumValue).build();
+
+        loadAndCheckAnnotations(WithEnumValueAnnotation.class, (annotations) -> {
+            assertThat(annotations, contains(annotatedInfo(customEnum), annotatedInfo(defaultEnum)));
         });
     }
 
