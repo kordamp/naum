@@ -20,6 +20,9 @@ import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.processor.AbstractProcessorTest;
 import org.kordamp.naum.processor.annotation.WithRetentionClassAnnotation.PlainClassAnnotation;
 import org.kordamp.naum.processor.annotation.WithRetentionRuntimeAnnotation.PlainRuntimeAnnotation;
+import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.CustomStringValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.EmptyDefaultStringValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.NonEmptyDefaultStringValueAnnotation;
 
 import java.util.List;
 
@@ -56,6 +59,17 @@ public class AnnotationTest extends AbstractProcessorTest {
 
         loadAndCheckAnnotations(WithRetentionRuntimeAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(annotation)));
+        });
+    }
+
+    @Test
+    public void loadAndCheckWithStringValueAnnotation() throws Exception {
+        final AnnotationInfo emptyDefault = annotationInfo().name(EmptyDefaultStringValueAnnotation.class.getName()).build();
+        final AnnotationInfo nonEmptyDefault = annotationInfo().name(NonEmptyDefaultStringValueAnnotation.class.getName()).build();
+        final AnnotationInfo custom = annotationInfo().name(CustomStringValueAnnotation.class.getName()).value("value", "Pizza").build();
+
+        loadAndCheckAnnotations(WithStringValueAnnotation.class, (annotations) -> {
+            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(emptyDefault), annotatedInfo(nonEmptyDefault)));
         });
     }
 
