@@ -18,6 +18,8 @@ package org.kordamp.naum.processor.annotation;
 import org.junit.Test;
 import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.processor.AbstractProcessorTest;
+import org.kordamp.naum.processor.annotation.WithPlainClassAnnotation.PlainClassAnnotation;
+import org.kordamp.naum.processor.annotation.WithPlainRuntimeAnnotation.PlainRuntimeAnnotation;
 
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class AnnotationTest extends AbstractProcessorTest {
 
     @Test
     public void loadAndCheckPlainAnnotationWithRetentionSource() throws Exception {
-        loadAndCheckAnnotations(WithPlainSourceAnno.class, (annotations) -> {
+        loadAndCheckAnnotations(WithPlainSourceAnnotation.class, (annotations) -> {
             assertThat(annotations.size(), is(0));
         });
     }
@@ -43,7 +45,7 @@ public class AnnotationTest extends AbstractProcessorTest {
     public void loadAndCheckPlainAnnotationWithRetentionClass() throws Exception {
         final AnnotationInfo annotation = annotationInfo().name(PlainClassAnnotation.class.getName()).build();
 
-        loadAndCheckAnnotations(WithPlainClassAnno.class, (annotations) -> {
+        loadAndCheckAnnotations(WithPlainClassAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(annotation)));
         });
     }
@@ -52,7 +54,7 @@ public class AnnotationTest extends AbstractProcessorTest {
     public void loadAndCheckPlainAnnotationWithRetentionRuntime() throws Exception {
         final AnnotationInfo annotation = annotationInfo().name(PlainRuntimeAnnotation.class.getName()).build();
 
-        loadAndCheckAnnotations(WithPlainRuntimeAnno.class, (annotations) -> {
+        loadAndCheckAnnotations(WithPlainRuntimeAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(annotation)));
         });
     }

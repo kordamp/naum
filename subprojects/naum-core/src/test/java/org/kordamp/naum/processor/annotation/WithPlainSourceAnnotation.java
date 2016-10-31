@@ -15,18 +15,17 @@
  */
 package org.kordamp.naum.processor.annotation;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * @author Stephan Classen
  */
+@WithPlainSourceAnnotation.PlainSourceAnnotation
+class WithPlainSourceAnnotation {
 
-@PlainSourceAnnotation
-class WithPlainSourceAnno {
+    @Retention(RetentionPolicy.SOURCE)
+    @interface PlainSourceAnnotation {
+    }
 }
 
-@PlainClassAnnotation
-class WithPlainClassAnno {
-}
-
-@PlainRuntimeAnnotation
-class WithPlainRuntimeAnno {
-}

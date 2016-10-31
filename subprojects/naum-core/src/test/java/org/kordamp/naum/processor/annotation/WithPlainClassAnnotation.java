@@ -21,15 +21,11 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * @author Stephan Classen
  */
+@WithPlainClassAnnotation.PlainClassAnnotation
+class WithPlainClassAnnotation {
 
-@Retention(RetentionPolicy.SOURCE)
-@interface PlainSourceAnnotation {
+    @Retention(RetentionPolicy.CLASS)
+    @interface PlainClassAnnotation {
+    }
 }
 
-@Retention(RetentionPolicy.CLASS)
-@interface PlainClassAnnotation {
-}
-
-@Retention(RetentionPolicy.RUNTIME)
-@interface PlainRuntimeAnnotation {
-}
