@@ -21,8 +21,8 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * @author Stephan Classen
  */
-@WithPlainSourceAnnotation.PlainSourceAnnotation
-class WithPlainSourceAnnotation {
+@WithRetentionSourceAnnotation.PlainSourceAnnotation
+class WithRetentionSourceAnnotation {
 
     @Retention(RetentionPolicy.SOURCE)
     @interface PlainSourceAnnotation {

@@ -18,8 +18,8 @@ package org.kordamp.naum.processor.annotation;
 import org.junit.Test;
 import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.processor.AbstractProcessorTest;
-import org.kordamp.naum.processor.annotation.WithPlainClassAnnotation.PlainClassAnnotation;
-import org.kordamp.naum.processor.annotation.WithPlainRuntimeAnnotation.PlainRuntimeAnnotation;
+import org.kordamp.naum.processor.annotation.WithRetentionClassAnnotation.PlainClassAnnotation;
+import org.kordamp.naum.processor.annotation.WithRetentionRuntimeAnnotation.PlainRuntimeAnnotation;
 
 import java.util.List;
 
@@ -35,26 +35,26 @@ import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
 public class AnnotationTest extends AbstractProcessorTest {
 
     @Test
-    public void loadAndCheckPlainAnnotationWithRetentionSource() throws Exception {
-        loadAndCheckAnnotations(WithPlainSourceAnnotation.class, (annotations) -> {
+    public void loadAndCheckWithRetentionSourceAnnotation() throws Exception {
+        loadAndCheckAnnotations(WithRetentionSourceAnnotation.class, (annotations) -> {
             assertThat(annotations.size(), is(0));
         });
     }
 
     @Test
-    public void loadAndCheckPlainAnnotationWithRetentionClass() throws Exception {
+    public void loadAndCheckWithRetentionClassAnnotation() throws Exception {
         final AnnotationInfo annotation = annotationInfo().name(PlainClassAnnotation.class.getName()).build();
 
-        loadAndCheckAnnotations(WithPlainClassAnnotation.class, (annotations) -> {
+        loadAndCheckAnnotations(WithRetentionClassAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(annotation)));
         });
     }
 
     @Test
-    public void loadAndCheckPlainAnnotationWithRetentionRuntime() throws Exception {
+    public void loadAndCheckWithRetentionRuntimeAnnotation() throws Exception {
         final AnnotationInfo annotation = annotationInfo().name(PlainRuntimeAnnotation.class.getName()).build();
 
-        loadAndCheckAnnotations(WithPlainRuntimeAnnotation.class, (annotations) -> {
+        loadAndCheckAnnotations(WithRetentionRuntimeAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(annotation)));
         });
     }
