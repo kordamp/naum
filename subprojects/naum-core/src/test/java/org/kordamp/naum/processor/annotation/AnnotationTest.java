@@ -19,6 +19,9 @@ import org.junit.Test;
 import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.model.AnnotationInfo.EnumEntry;
 import org.kordamp.naum.processor.AbstractProcessorTest;
+import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.CustomAnnotationValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.DefaultAnnotationValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.InnerAnnotation;
 import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.CustomEnumValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.DefaultEnumValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.SomeEnum;
@@ -86,6 +89,17 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo customEnum = annotationInfo().name(CustomEnumValueAnnotation.class.getName()).enumValue("value", enumValue).build();
 
         loadAndCheckAnnotations(WithEnumValueAnnotation.class, (annotations) -> {
+            assertThat(annotations, contains(annotatedInfo(customEnum), annotatedInfo(defaultEnum)));
+        });
+    }
+
+    @Test
+    public void loadAndCheckWithAnnotationValueAnnotation() throws Exception {
+        final AnnotationInfo defaultEnum = annotationInfo().name(DefaultAnnotationValueAnnotation.class.getName()).build();
+        final AnnotationInfo innerAnnotation = annotationInfo().name(InnerAnnotation.class.getName()).value("value", "Pizza").build();
+        final AnnotationInfo customEnum = annotationInfo().name(CustomAnnotationValueAnnotation.class.getName()).value("value", innerAnnotation).build();
+
+        loadAndCheckAnnotations(WithAnnotationValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(customEnum), annotatedInfo(defaultEnum)));
         });
     }
