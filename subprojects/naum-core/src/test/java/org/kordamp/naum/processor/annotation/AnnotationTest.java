@@ -25,6 +25,13 @@ import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.Inner
 import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.CustomEnumValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.DefaultEnumValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.SomeEnum;
+import org.kordamp.naum.processor.annotation.WithPrimitiveValueAnnotation.ByteValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithPrimitiveValueAnnotation.CharValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithPrimitiveValueAnnotation.DoubleValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithPrimitiveValueAnnotation.FloatValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithPrimitiveValueAnnotation.IntValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithPrimitiveValueAnnotation.LongValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithPrimitiveValueAnnotation.ShortValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithRetentionClassAnnotation.PlainClassAnnotation;
 import org.kordamp.naum.processor.annotation.WithRetentionRuntimeAnnotation.PlainRuntimeAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.CustomStringValueAnnotation;
@@ -101,6 +108,29 @@ public class AnnotationTest extends AbstractProcessorTest {
 
         loadAndCheckAnnotations(WithAnnotationValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(customEnum), annotatedInfo(defaultEnum)));
+        });
+    }
+
+    @Test
+    public void loadAndCheckWithPrimitiveValueAnnotation() throws Exception {
+        final AnnotationInfo byteAnnotation = annotationInfo().name(ByteValueAnnotation.class.getName()).value("byteValue", (byte) 1).build();
+        final AnnotationInfo charAnnotation = annotationInfo().name(CharValueAnnotation.class.getName()).value("charValue", (char) 2).build();
+        final AnnotationInfo shortAnnotation = annotationInfo().name(ShortValueAnnotation.class.getName()).value("shortValue", (short) 3).build();
+        final AnnotationInfo intAnnotation = annotationInfo().name(IntValueAnnotation.class.getName()).value("intValue", 4).build();
+        final AnnotationInfo longAnnotation = annotationInfo().name(LongValueAnnotation.class.getName()).value("longValue", (long) 5).build();
+        final AnnotationInfo floatAnnotation = annotationInfo().name(FloatValueAnnotation.class.getName()).value("floatValue", 6.1f).build();
+        final AnnotationInfo doubleAnnotation = annotationInfo().name(DoubleValueAnnotation.class.getName()).value("doubleValue", 7.1).build();
+
+        loadAndCheckAnnotations(WithPrimitiveValueAnnotation.class, (annotations) -> {
+            assertThat(annotations, contains(
+                annotatedInfo(byteAnnotation),
+                annotatedInfo(charAnnotation),
+                annotatedInfo(doubleAnnotation),
+                annotatedInfo(floatAnnotation),
+                annotatedInfo(intAnnotation),
+                annotatedInfo(longAnnotation),
+                annotatedInfo(shortAnnotation)
+            ));
         });
     }
 
