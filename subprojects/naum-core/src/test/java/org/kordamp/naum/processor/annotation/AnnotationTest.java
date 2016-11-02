@@ -22,6 +22,9 @@ import org.kordamp.naum.processor.AbstractProcessorTest;
 import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.CustomAnnotationValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.DefaultAnnotationValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.InnerAnnotation;
+import org.kordamp.naum.processor.annotation.WithClassValueAnnotation.CustomArrayClassValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithClassValueAnnotation.CustomClassValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithClassValueAnnotation.DefaultClassValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.CustomEnumValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.DefaultEnumValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.SomeEnum;
@@ -37,6 +40,7 @@ import org.kordamp.naum.processor.annotation.WithRetentionRuntimeAnnotation.Plai
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.CustomStringValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.EmptyDefaultStringValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.NonEmptyDefaultStringValueAnnotation;
+import org.objectweb.asm.Type;
 
 import java.util.List;
 
@@ -86,6 +90,20 @@ public class AnnotationTest extends AbstractProcessorTest {
 
         loadAndCheckAnnotations(WithStringValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(emptyDefault), annotatedInfo(nonEmptyDefault)));
+        });
+    }
+
+    @Test
+    public void loadAndCheckWithClassValueAnnotation() throws Exception {
+        final Type type = Type.getType(Exception.class);
+        final Type arrayType = Type.getType(Exception[].class);
+
+        final AnnotationInfo defaultClass = annotationInfo().name(DefaultClassValueAnnotation.class.getName()).build();
+        final AnnotationInfo customClass = annotationInfo().name(CustomClassValueAnnotation.class.getName()).value("value", type).build();
+        final AnnotationInfo customArrayClass = annotationInfo().name(CustomArrayClassValueAnnotation.class.getName()).value("value", arrayType).build();
+
+        loadAndCheckAnnotations(WithClassValueAnnotation.class, (annotations) -> {
+            assertThat(annotations, contains(annotatedInfo(customArrayClass), annotatedInfo(customClass), annotatedInfo(defaultClass)));
         });
     }
 
