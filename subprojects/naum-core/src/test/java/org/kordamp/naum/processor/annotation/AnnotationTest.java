@@ -37,6 +37,9 @@ import org.kordamp.naum.processor.annotation.WithPrimitiveValueAnnotation.LongVa
 import org.kordamp.naum.processor.annotation.WithPrimitiveValueAnnotation.ShortValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithRetentionClassAnnotation.PlainClassAnnotation;
 import org.kordamp.naum.processor.annotation.WithRetentionRuntimeAnnotation.PlainRuntimeAnnotation;
+import org.kordamp.naum.processor.annotation.WithStringArrayValueAnnotation.CustomStringArrayValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithStringArrayValueAnnotation.DefaultStringArrayValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithStringArrayValueAnnotation.EmptyStringArrayValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.CustomStringValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.EmptyDefaultStringValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.NonEmptyDefaultStringValueAnnotation;
@@ -149,6 +152,17 @@ public class AnnotationTest extends AbstractProcessorTest {
                 annotatedInfo(longAnnotation),
                 annotatedInfo(shortAnnotation)
             ));
+        });
+    }
+
+    @Test
+    public void loadAndCheckWithStringArrayValueAnnotation() throws Exception {
+        final AnnotationInfo nonEmptyDefault = annotationInfo().name(DefaultStringArrayValueAnnotation.class.getName()).build();
+        final AnnotationInfo empty = annotationInfo().name(EmptyStringArrayValueAnnotation.class.getName()).value("value", new String[0]).build();
+        final AnnotationInfo custom = annotationInfo().name(CustomStringArrayValueAnnotation.class.getName()).value("value", new String[]{"Pizza", "Bar"}).build();
+
+        loadAndCheckAnnotations(WithStringArrayValueAnnotation.class, (annotations) -> {
+            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty)));
         });
     }
 
