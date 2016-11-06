@@ -175,7 +175,7 @@ public class AnnotationTest extends AbstractProcessorTest {
 
     @Test
     public void loadAndCheckWithPrimitiveArrayValueAnnotation() throws Exception {
-        final AnnotationInfo byteAnnotation = annotationInfo().name(ByteArrayAnnotation.class.getName()).value("customByteArray", new byte[]{1, 2}).build();
+        final AnnotationInfo byteAnnotation = annotationInfo().name(ByteArrayAnnotation.class.getName()).value("emptyByteArray", new byte[0]).value("customByteArray", new byte[]{1, 2}).build();
         final AnnotationInfo charAnnotation = annotationInfo().name(CharArrayAnnotation.class.getName()).value("customCharArray", new char[]{2, 3}).build();
         final AnnotationInfo shortAnnotation = annotationInfo().name(ShortArrayAnnotation.class.getName()).value("customShortArray", new short[]{3, 4}).build();
         final AnnotationInfo intAnnotation = annotationInfo().name(IntArrayAnnotation.class.getName()).value("customIntArray", new int[]{4, 5}).build();
