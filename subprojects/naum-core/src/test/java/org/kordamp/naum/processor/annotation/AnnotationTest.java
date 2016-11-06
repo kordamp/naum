@@ -19,6 +19,11 @@ import org.junit.Test;
 import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.model.AnnotationInfo.EnumEntry;
 import org.kordamp.naum.processor.AbstractProcessorTest;
+import org.kordamp.naum.processor.annotation.WithAnnotationArrayValueAnnotation.AnotherAnnotation;
+import org.kordamp.naum.processor.annotation.WithAnnotationArrayValueAnnotation.CustomAnnotationArrayValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithAnnotationArrayValueAnnotation.DefaultAnnotationArrayValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithAnnotationArrayValueAnnotation.EmptyAnnotationArrayValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithAnnotationArrayValueAnnotation.SingleAnnotationArrayValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.CustomAnnotationValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.DefaultAnnotationValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.InnerAnnotation;
@@ -211,6 +216,22 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo custom = annotationInfo().name(CustomEnumArrayValueAnnotation.class.getName()).value("value", new EnumEntry[]{pizza, bar}).build();
 
         loadAndCheckAnnotations(WithEnumArrayValueAnnotation.class, (annotations) -> {
+            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty), annotatedInfo(single)));
+        });
+    }
+
+    @Test
+    public void loadAndCheckWithAnnotationArrayValueAnnotation() throws Exception {
+        final AnnotationInfo garten = annotationInfo().name(AnotherAnnotation.class.getName()).value("value", "garten").build();
+        final AnnotationInfo pizza = annotationInfo().name(AnotherAnnotation.class.getName()).value("value", "pizza").build();
+        final AnnotationInfo bar = annotationInfo().name(AnotherAnnotation.class.getName()).value("value", "bar").build();
+
+        final AnnotationInfo nonEmptyDefault = annotationInfo().name(DefaultAnnotationArrayValueAnnotation.class.getName()).build();
+        final AnnotationInfo empty = annotationInfo().name(EmptyAnnotationArrayValueAnnotation.class.getName()).value("value", new AnnotationInfo[0]).build();
+        final AnnotationInfo single = annotationInfo().name(SingleAnnotationArrayValueAnnotation.class.getName()).value("value", new AnnotationInfo[]{garten}).build();
+        final AnnotationInfo custom = annotationInfo().name(CustomAnnotationArrayValueAnnotation.class.getName()).value("value", new AnnotationInfo[]{pizza, bar}).build();
+
+        loadAndCheckAnnotations(WithAnnotationArrayValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty), annotatedInfo(single)));
         });
     }
