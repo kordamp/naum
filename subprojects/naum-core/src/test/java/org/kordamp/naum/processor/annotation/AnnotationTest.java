@@ -22,6 +22,10 @@ import org.kordamp.naum.processor.AbstractProcessorTest;
 import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.CustomAnnotationValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.DefaultAnnotationValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithAnnotationValueAnnotation.InnerAnnotation;
+import org.kordamp.naum.processor.annotation.WithClassArrayValueAnnotation.CustomClassArrayValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithClassArrayValueAnnotation.DefaultClassArrayValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithClassArrayValueAnnotation.EmptyClassArrayValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithClassArrayValueAnnotation.SingleClassArrayValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithClassValueAnnotation.CustomArrayClassValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithClassValueAnnotation.CustomClassValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithClassValueAnnotation.DefaultClassValueAnnotation;
@@ -171,6 +175,18 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo custom = annotationInfo().name(CustomStringArrayValueAnnotation.class.getName()).value("value", new String[]{"Pizza", "Bar"}).build();
 
         loadAndCheckAnnotations(WithStringArrayValueAnnotation.class, (annotations) -> {
+            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty), annotatedInfo(single)));
+        });
+    }
+
+    @Test
+    public void loadAndCheckWithClassArrayValueAnnotation() throws Exception {
+        final AnnotationInfo nonEmptyDefault = annotationInfo().name(DefaultClassArrayValueAnnotation.class.getName()).build();
+        final AnnotationInfo empty = annotationInfo().name(EmptyClassArrayValueAnnotation.class.getName()).value("value", new Class[0]).build();
+        final AnnotationInfo single = annotationInfo().name(SingleClassArrayValueAnnotation.class.getName()).value("value", new Class[]{Exception.class}).build();
+        final AnnotationInfo custom = annotationInfo().name(CustomClassArrayValueAnnotation.class.getName()).value("value", new Class[]{IllegalStateException.class, IllegalArgumentException.class}).build();
+
+        loadAndCheckAnnotations(WithClassArrayValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty), annotatedInfo(single)));
         });
     }
