@@ -19,19 +19,21 @@ package org.kordamp.naum.processor.annotation;
 /**
  * @author Stephan Classen
  */
-@WithPrimitiveArrayValueAnnotation.ByteArrayAnnotation(emptyByteArray = {}, customByteArray = {1, 2})
-@WithPrimitiveArrayValueAnnotation.CharArrayAnnotation(emptyCharArray = {}, customCharArray = {2, 3})
-@WithPrimitiveArrayValueAnnotation.ShortArrayAnnotation(emptyShortArray = {}, customShortArray = {3, 4})
-@WithPrimitiveArrayValueAnnotation.IntArrayAnnotation(emptyIntArray = {}, customIntArray = {4, 5})
-@WithPrimitiveArrayValueAnnotation.LongArrayAnnotation(emptyLongArray = {}, customLongArray = {5, 6})
-@WithPrimitiveArrayValueAnnotation.FloatArrayAnnotation(emptyFloatArray = {}, customFloatArray = {6.1f, 6.2f})
-@WithPrimitiveArrayValueAnnotation.DoubleArrayAnnotation(emptyDoubleArray = {}, customDoubleArray = {7.1, 7.2})
+@WithPrimitiveArrayValueAnnotation.ByteArrayAnnotation(emptyByteArray = {}, singleByteArray = 0, customByteArray = {1, 2})
+@WithPrimitiveArrayValueAnnotation.CharArrayAnnotation(emptyCharArray = {}, singleCharArray = 1, customCharArray = {2, 3})
+@WithPrimitiveArrayValueAnnotation.ShortArrayAnnotation(emptyShortArray = {}, singleShortArray = 2, customShortArray = {3, 4})
+@WithPrimitiveArrayValueAnnotation.IntArrayAnnotation(emptyIntArray = {}, singleIntArray = 3, customIntArray = {4, 5})
+@WithPrimitiveArrayValueAnnotation.LongArrayAnnotation(emptyLongArray = {}, singleLongArray = 4, customLongArray = {5, 6})
+@WithPrimitiveArrayValueAnnotation.FloatArrayAnnotation(emptyFloatArray = {}, singleFloatArray = 6.1f, customFloatArray = {6.2f, 6.3f})
+@WithPrimitiveArrayValueAnnotation.DoubleArrayAnnotation(emptyDoubleArray = {}, singleDoubleArray = 7.1, customDoubleArray = {7.2, 7.3})
 class WithPrimitiveArrayValueAnnotation {
 
     @interface ByteArrayAnnotation {
         byte[] defaultByteArray() default {1, 2, 3};
 
         byte[] emptyByteArray();
+
+        byte[] singleByteArray();
 
         byte[] customByteArray();
     }
@@ -41,6 +43,8 @@ class WithPrimitiveArrayValueAnnotation {
 
         char[] emptyCharArray();
 
+        char[] singleCharArray();
+
         char[] customCharArray();
     }
 
@@ -48,6 +52,8 @@ class WithPrimitiveArrayValueAnnotation {
         short[] defaultShortArray() default {1, 2, 3};
 
         short[] emptyShortArray();
+
+        short[] singleShortArray();
 
         short[] customShortArray();
     }
@@ -57,6 +63,8 @@ class WithPrimitiveArrayValueAnnotation {
 
         int[] emptyIntArray();
 
+        int[] singleIntArray();
+
         int[] customIntArray();
     }
 
@@ -64,6 +72,8 @@ class WithPrimitiveArrayValueAnnotation {
         long[] defaultLongArray() default {1, 2, 3};
 
         long[] emptyLongArray();
+
+        long[] singleLongArray();
 
         long[] customLongArray();
     }
@@ -73,6 +83,8 @@ class WithPrimitiveArrayValueAnnotation {
 
         float[] emptyFloatArray();
 
+        float[] singleFloatArray();
+
         float[] customFloatArray();
     }
 
@@ -80,6 +92,8 @@ class WithPrimitiveArrayValueAnnotation {
         double[] defaultDoubleArray() default {1, 2, 3};
 
         double[] emptyDoubleArray();
+
+        double[] singleDoubleArray();
 
         double[] customDoubleArray();
     }

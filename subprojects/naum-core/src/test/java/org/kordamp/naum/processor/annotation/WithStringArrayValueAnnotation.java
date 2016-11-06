@@ -21,6 +21,7 @@ package org.kordamp.naum.processor.annotation;
  */
 @WithStringArrayValueAnnotation.DefaultStringArrayValueAnnotation
 @WithStringArrayValueAnnotation.EmptyStringArrayValueAnnotation({})
+@WithStringArrayValueAnnotation.SingleStringArrayValueAnnotation("Garten")
 @WithStringArrayValueAnnotation.CustomStringArrayValueAnnotation({"Pizza", "Bar"})
 class WithStringArrayValueAnnotation {
 
@@ -29,6 +30,10 @@ class WithStringArrayValueAnnotation {
     }
 
     @interface EmptyStringArrayValueAnnotation {
+        String[] value();
+    }
+
+    @interface SingleStringArrayValueAnnotation {
         String[] value();
     }
 

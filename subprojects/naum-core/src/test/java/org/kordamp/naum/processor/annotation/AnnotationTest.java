@@ -47,6 +47,7 @@ import org.kordamp.naum.processor.annotation.WithRetentionRuntimeAnnotation.Plai
 import org.kordamp.naum.processor.annotation.WithStringArrayValueAnnotation.CustomStringArrayValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringArrayValueAnnotation.DefaultStringArrayValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringArrayValueAnnotation.EmptyStringArrayValueAnnotation;
+import org.kordamp.naum.processor.annotation.WithStringArrayValueAnnotation.SingleStringArrayValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.CustomStringValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.EmptyDefaultStringValueAnnotation;
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.NonEmptyDefaultStringValueAnnotation;
@@ -166,22 +167,51 @@ public class AnnotationTest extends AbstractProcessorTest {
     public void loadAndCheckWithStringArrayValueAnnotation() throws Exception {
         final AnnotationInfo nonEmptyDefault = annotationInfo().name(DefaultStringArrayValueAnnotation.class.getName()).build();
         final AnnotationInfo empty = annotationInfo().name(EmptyStringArrayValueAnnotation.class.getName()).value("value", new String[0]).build();
+        final AnnotationInfo single = annotationInfo().name(SingleStringArrayValueAnnotation.class.getName()).value("value", new String[]{"Garten"}).build();
         final AnnotationInfo custom = annotationInfo().name(CustomStringArrayValueAnnotation.class.getName()).value("value", new String[]{"Pizza", "Bar"}).build();
 
         loadAndCheckAnnotations(WithStringArrayValueAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty)));
+            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty), annotatedInfo(single)));
         });
     }
 
     @Test
     public void loadAndCheckWithPrimitiveArrayValueAnnotation() throws Exception {
-        final AnnotationInfo byteAnnotation = annotationInfo().name(ByteArrayAnnotation.class.getName()).value("emptyByteArray", new byte[0]).value("customByteArray", new byte[]{1, 2}).build();
-        final AnnotationInfo charAnnotation = annotationInfo().name(CharArrayAnnotation.class.getName()).value("customCharArray", new char[]{2, 3}).build();
-        final AnnotationInfo shortAnnotation = annotationInfo().name(ShortArrayAnnotation.class.getName()).value("customShortArray", new short[]{3, 4}).build();
-        final AnnotationInfo intAnnotation = annotationInfo().name(IntArrayAnnotation.class.getName()).value("customIntArray", new int[]{4, 5}).build();
-        final AnnotationInfo longAnnotation = annotationInfo().name(LongArrayAnnotation.class.getName()).value("customLongArray", new long[]{5, 6}).build();
-        final AnnotationInfo floatAnnotation = annotationInfo().name(FloatArrayAnnotation.class.getName()).value("customFloatArray", new float[]{6.1f, 6.2f}).build();
-        final AnnotationInfo doubleAnnotation = annotationInfo().name(DoubleArrayAnnotation.class.getName()).value("customDoubleArray", new double[]{7.1, 7.2}).build();
+        final AnnotationInfo byteAnnotation = annotationInfo().name(ByteArrayAnnotation.class.getName())
+            .value("emptyByteArray", new byte[0])
+            .value("singleByteArray", new byte[]{0})
+            .value("customByteArray", new byte[]{1, 2})
+            .build();
+        final AnnotationInfo charAnnotation = annotationInfo().name(CharArrayAnnotation.class.getName())
+            .value("emptyCharArray", new char[0])
+            .value("singleCharArray", new char[]{1})
+            .value("customCharArray", new char[]{2, 3})
+            .build();
+        final AnnotationInfo shortAnnotation = annotationInfo().name(ShortArrayAnnotation.class.getName())
+            .value("emptyShortArray", new short[0])
+            .value("singleShortArray", new short[]{2})
+            .value("customShortArray", new short[]{3, 4})
+            .build();
+        final AnnotationInfo intAnnotation = annotationInfo().name(IntArrayAnnotation.class.getName())
+            .value("emptyIntArray", new int[0])
+            .value("singleIntArray", new int[]{3})
+            .value("customIntArray", new int[]{4, 5})
+            .build();
+        final AnnotationInfo longAnnotation = annotationInfo().name(LongArrayAnnotation.class.getName())
+            .value("emptyLongArray", new long[0])
+            .value("singleLongArray", new long[]{5})
+            .value("customLongArray", new long[]{5, 6})
+            .build();
+        final AnnotationInfo floatAnnotation = annotationInfo().name(FloatArrayAnnotation.class.getName())
+            .value("emptyFloatArray", new float[0])
+            .value("singleFloatArray", new float[]{6.1f})
+            .value("customFloatArray", new float[]{6.2f, 6.3f})
+            .build();
+        final AnnotationInfo doubleAnnotation = annotationInfo().name(DoubleArrayAnnotation.class.getName())
+            .value("emptyDoubleArray", new double[0])
+            .value("singleDoubleArray", new double[]{7.1})
+            .value("customDoubleArray", new double[]{7.2, 7.3})
+            .build();
 
         loadAndCheckAnnotations(WithPrimitiveArrayValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(
