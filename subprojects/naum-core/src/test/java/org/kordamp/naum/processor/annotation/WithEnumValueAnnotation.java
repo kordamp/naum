@@ -23,11 +23,11 @@ import static org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.Some
  * @author Stephan Classen
  */
 @WithEnumValueAnnotation.DefaultEnumValueAnnotation
-@WithEnumValueAnnotation.CustomEnumValueAnnotation(PIZZA)
+@WithEnumValueAnnotation.CustomEnumValueAnnotation(NAUM)
 class WithEnumValueAnnotation {
 
     @interface DefaultEnumValueAnnotation {
-        SomeEnum value() default NAUM;
+        SomeEnum value() default PIZZA;
     }
 
     @interface CustomEnumValueAnnotation {
