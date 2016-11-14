@@ -17,11 +17,8 @@ package org.kordamp.naum.model;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,56 +26,20 @@ import java.util.List;
 /**
  * @author Andres Almiray
  */
-@RequiredArgsConstructor
-@EqualsAndHashCode
-@ToString(exclude = "contentHash")
-public abstract class AnnotatedInfo<S extends AnnotatedInfo<S>> implements Comparable<S> {
-    protected static final String[] EMPTY = new String[0];
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public abstract class AnnotatedInfo<S extends AnnotatedInfo<S>> extends NamedInfo<S> {
 
-    @Getter
-    private final String name;
     @Getter
     private final List<AnnotationInfo> annotations = new ArrayList<>();
 
-    private String contentHash;
-
-    protected final S self() {
-        return (S) this;
-    }
-
-    @Override
-    public int compareTo(AnnotatedInfo o) {
-        if (o == null) { return -1; }
-        return name.compareTo(o.name);
+    protected AnnotatedInfo(String name) {
+        super(name);
     }
 
     public S addToAnnotations(AnnotationInfo annotation) {
         annotations.add(annotation);
         Collections.sort(annotations);
         return self();
-    }
-
-    public abstract String getContent();
-
-    public final String getContentHash() {
-        if (contentHash == null) {
-            contentHash = toSHA1(getContent());
-        }
-        return contentHash;
-    }
-
-    private static String toSHA1(String content) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            byte[] bytes = md.digest(content.getBytes());
-
-            String result = "";
-            for (byte b : bytes) {
-                result += Integer.toString((b & 0xff) + 0x100, 16).substring(1);
-            }
-            return result;
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
     }
 }
