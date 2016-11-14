@@ -17,31 +17,31 @@ package org.kordamp.naum;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.kordamp.naum.model.AnnotatedInfo;
+import org.kordamp.naum.model.NamedInfo;
 
 /**
  * @author Stephan Classen
  */
-public class AnnotatedInfoMatcher<S extends AnnotatedInfo<S>> extends BaseMatcher<S> {
+public class NamedInfoMatcher<S extends NamedInfo<S>> extends BaseMatcher<S> {
 
-    public static <T extends AnnotatedInfo<T>> AnnotatedInfoMatcher<T> annotatedInfo(T expected) {
+    public static <T extends NamedInfo<T>> NamedInfoMatcher<T> namedInfo(T expected) {
         if (expected == null) {
             throw new NullPointerException();
         }
 
-        return new AnnotatedInfoMatcher<>(expected);
+        return new NamedInfoMatcher<>(expected);
     }
 
-    private final AnnotatedInfo<?> expected;
+    private final NamedInfo<?> expected;
 
-    private AnnotatedInfoMatcher(S expected) {
+    private NamedInfoMatcher(S expected) {
         this.expected = expected;
     }
 
     @Override
     public boolean matches(Object item) {
-        if (item instanceof AnnotatedInfo<?>) {
-            final AnnotatedInfo<?> actual = (AnnotatedInfo<?>) item;
+        if (item instanceof NamedInfo<?>) {
+            final NamedInfo<?> actual = (NamedInfo<?>) item;
             return expected.getContentHash().equals(actual.getContentHash()) && expected.equals(actual);
         }
 
@@ -50,8 +50,8 @@ public class AnnotatedInfoMatcher<S extends AnnotatedInfo<S>> extends BaseMatche
 
     @Override
     public void describeMismatch(Object item, Description description) {
-        if (item instanceof AnnotatedInfo<?>) {
-            final AnnotatedInfo<?> actual = (AnnotatedInfo<?>) item;
+        if (item instanceof NamedInfo<?>) {
+            final NamedInfo<?> actual = (NamedInfo<?>) item;
             description.appendText("was ").appendText(actual.getContent());
         } else {
             super.describeMismatch(item, description);

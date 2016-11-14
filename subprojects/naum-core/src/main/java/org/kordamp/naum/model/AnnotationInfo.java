@@ -31,7 +31,7 @@ import java.util.Map;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class AnnotationInfo extends AnnotatedInfo<AnnotationInfo> {
+public class AnnotationInfo extends NamedInfo<AnnotationInfo> {
     private final Map<String, Object> values = new LinkedHashMap<>();
     private final Map<String, EnumEntry> enumValues = new LinkedHashMap<>();
 
@@ -59,14 +59,6 @@ public class AnnotationInfo extends AnnotatedInfo<AnnotationInfo> {
     public String getContent() {
         StringBuilder b = new StringBuilder("A{N=")
             .append(getName());
-        if (!getAnnotations().isEmpty()) {
-            b.append("#A=[");
-            for (int i = 0; i < getAnnotations().size(); i++) {
-                if (i != 0) { b.append(","); }
-                b.append(getAnnotations().get(i).getContent());
-            }
-            b.append("]");
-        }
 
         if (!values.isEmpty()) {
             b.append("#V=")

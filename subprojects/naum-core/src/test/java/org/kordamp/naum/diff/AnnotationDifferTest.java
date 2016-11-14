@@ -28,8 +28,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.kordamp.naum.diff.AnnotationDiffer.KEY_ANNOTATION_ANNOTATION_ADDED;
-import static org.kordamp.naum.diff.AnnotationDiffer.KEY_ANNOTATION_ANNOTATION_REMOVED;
 import static org.kordamp.naum.diff.AnnotationDiffer.KEY_ANNOTATION_ENUM_VALUE_ADDED;
 import static org.kordamp.naum.diff.AnnotationDiffer.KEY_ANNOTATION_ENUM_VALUE_MODIFIED;
 import static org.kordamp.naum.diff.AnnotationDiffer.KEY_ANNOTATION_ENUM_VALUE_REMOVED;
@@ -195,74 +193,6 @@ public class AnnotationDifferTest extends AbstractDifferTestCase {
                         .messageArg(ENUM_NAME)
                         .messageArg(ENUM_TYPE + "." + ENUM_VALUE1)
                         .messageArg(ENUM_TYPE + "." + ENUM_VALUE2)
-                        .build()
-                )
-            },
-
-            new Object[]{
-                "annotations-added",
-                annotationInfo()
-                    .name(ANNOTATIONNAME)
-                    .build(),
-                annotationInfo()
-                    .name(ANNOTATIONNAME)
-                    .build()
-                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
-                asList(
-                    diff()
-                        .severity(ERROR)
-                        .type(ADDED)
-                        .messageKey(KEY_ANNOTATION_ANNOTATION_ADDED)
-                        .messageArg(ANNOTATIONNAME)
-                        .messageArg("@" + ANNOTATION_A)
-                        .build()
-                )
-            },
-
-            new Object[]{
-                "annotations-removed",
-                annotationInfo()
-                    .name(ANNOTATIONNAME)
-                    .build()
-                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
-                annotationInfo()
-                    .name(ANNOTATIONNAME)
-                    .build(),
-                asList(
-                    diff()
-                        .severity(ERROR)
-                        .type(REMOVED)
-                        .messageKey(KEY_ANNOTATION_ANNOTATION_REMOVED)
-                        .messageArg(ANNOTATIONNAME)
-                        .messageArg("@" + ANNOTATION_A)
-                        .build()
-                )
-            },
-
-            new Object[]{
-                "annotations-modified",
-                annotationInfo()
-                    .name(ANNOTATIONNAME)
-                    .build()
-                    .addToAnnotations(annotationInfo().name(ANNOTATION_A).build()),
-                annotationInfo()
-                    .name(ANNOTATIONNAME)
-                    .build()
-                    .addToAnnotations(annotationInfo().name(ANNOTATION_B).build()),
-                asList(
-                    diff()
-                        .severity(ERROR)
-                        .type(REMOVED)
-                        .messageKey(KEY_ANNOTATION_ANNOTATION_REMOVED)
-                        .messageArg(ANNOTATIONNAME)
-                        .messageArg("@" + ANNOTATION_A)
-                        .build(),
-                    diff()
-                        .severity(ERROR)
-                        .type(ADDED)
-                        .messageKey(KEY_ANNOTATION_ANNOTATION_ADDED)
-                        .messageArg(ANNOTATIONNAME)
-                        .messageArg("@" + ANNOTATION_B)
                         .build()
                 )
             }

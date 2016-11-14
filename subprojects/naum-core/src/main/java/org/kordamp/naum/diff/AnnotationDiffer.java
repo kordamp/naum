@@ -38,16 +38,14 @@ import static org.kordamp.naum.diff.Diff.Type.REMOVED;
  * @author Stephan Classen
  */
 @Data(staticConstructor = "annotationDiffer")
-@EqualsAndHashCode(callSuper = true)
-public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
+@EqualsAndHashCode
+public class AnnotationDiffer implements Differ<AnnotationInfo> {
     public static final String KEY_ANNOTATION_VALUE_ADDED = "annotation.value.added";
     public static final String KEY_ANNOTATION_VALUE_REMOVED = "annotation.value.removed";
     public static final String KEY_ANNOTATION_VALUE_MODIFIED = "annotation.value.modified";
     public static final String KEY_ANNOTATION_ENUM_VALUE_ADDED = "annotation.enum.value.added";
     public static final String KEY_ANNOTATION_ENUM_VALUE_REMOVED = "annotation.enum.value.removed";
     public static final String KEY_ANNOTATION_ENUM_VALUE_MODIFIED = "annotation.enum.value.modified";
-    public static final String KEY_ANNOTATION_ANNOTATION_REMOVED = "annotation.annotation.removed";
-    public static final String KEY_ANNOTATION_ANNOTATION_ADDED = "annotation.annotation.added";
 
     private final AnnotationInfo previous;
     private final AnnotationInfo next;
@@ -65,9 +63,6 @@ public class AnnotationDiffer extends AbstractDiffer<AnnotationInfo> {
 
         // 2. enumValues
         checkEnumValues(list);
-
-        // 3. annotations
-        checkAnnotations(list, "annotation");
 
         return list;
     }

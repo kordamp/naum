@@ -72,7 +72,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
-import static org.kordamp.naum.AnnotatedInfoMatcher.annotatedInfo;
+import static org.kordamp.naum.NamedInfoMatcher.namedInfo;
 import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
 import static org.kordamp.naum.model.AnnotationInfo.newEnumEntry;
 import static org.kordamp.naum.processor.annotation.WithEnumArrayValueAnnotation.AnotherEnum.BAR;
@@ -97,7 +97,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo annotation = annotationInfo().name(PlainClassAnnotation.class.getName()).build();
 
         loadAndCheckAnnotations(WithRetentionClassAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(annotation)));
+            assertThat(annotations, contains(namedInfo(annotation)));
         });
     }
 
@@ -106,7 +106,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo annotation = annotationInfo().name(PlainRuntimeAnnotation.class.getName()).build();
 
         loadAndCheckAnnotations(WithRetentionRuntimeAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(annotation)));
+            assertThat(annotations, contains(namedInfo(annotation)));
         });
     }
 
@@ -117,7 +117,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo custom = annotationInfo().name(CustomStringValueAnnotation.class.getName()).value("value", "Pizza").build();
 
         loadAndCheckAnnotations(WithStringValueAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(emptyDefault), annotatedInfo(nonEmptyDefault)));
+            assertThat(annotations, contains(namedInfo(custom), namedInfo(emptyDefault), namedInfo(nonEmptyDefault)));
         });
     }
 
@@ -131,7 +131,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo customArrayClass = annotationInfo().name(CustomArrayClassValueAnnotation.class.getName()).value("value", arrayType).build();
 
         loadAndCheckAnnotations(WithClassValueAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(customArrayClass), annotatedInfo(customClass), annotatedInfo(defaultClass)));
+            assertThat(annotations, contains(namedInfo(customArrayClass), namedInfo(customClass), namedInfo(defaultClass)));
         });
     }
 
@@ -142,7 +142,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo customEnum = annotationInfo().name(CustomEnumValueAnnotation.class.getName()).enumValue("value", enumValue).build();
 
         loadAndCheckAnnotations(WithEnumValueAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(customEnum), annotatedInfo(defaultEnum)));
+            assertThat(annotations, contains(namedInfo(customEnum), namedInfo(defaultEnum)));
         });
     }
 
@@ -153,7 +153,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo customEnum = annotationInfo().name(CustomAnnotationValueAnnotation.class.getName()).value("value", innerAnnotation).build();
 
         loadAndCheckAnnotations(WithAnnotationValueAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(customEnum), annotatedInfo(defaultEnum)));
+            assertThat(annotations, contains(namedInfo(customEnum), namedInfo(defaultEnum)));
         });
     }
 
@@ -169,13 +169,13 @@ public class AnnotationTest extends AbstractProcessorTest {
 
         loadAndCheckAnnotations(WithPrimitiveValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(
-                annotatedInfo(byteAnnotation),
-                annotatedInfo(charAnnotation),
-                annotatedInfo(doubleAnnotation),
-                annotatedInfo(floatAnnotation),
-                annotatedInfo(intAnnotation),
-                annotatedInfo(longAnnotation),
-                annotatedInfo(shortAnnotation)
+                namedInfo(byteAnnotation),
+                namedInfo(charAnnotation),
+                namedInfo(doubleAnnotation),
+                namedInfo(floatAnnotation),
+                namedInfo(intAnnotation),
+                namedInfo(longAnnotation),
+                namedInfo(shortAnnotation)
             ));
         });
     }
@@ -188,7 +188,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo custom = annotationInfo().name(CustomStringArrayValueAnnotation.class.getName()).value("value", new String[]{"Pizza", "Bar"}).build();
 
         loadAndCheckAnnotations(WithStringArrayValueAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty), annotatedInfo(single)));
+            assertThat(annotations, contains(namedInfo(custom), namedInfo(nonEmptyDefault), namedInfo(empty), namedInfo(single)));
         });
     }
 
@@ -200,7 +200,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo custom = annotationInfo().name(CustomClassArrayValueAnnotation.class.getName()).value("value", new Class[]{IllegalStateException.class, IllegalArgumentException.class}).build();
 
         loadAndCheckAnnotations(WithClassArrayValueAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty), annotatedInfo(single)));
+            assertThat(annotations, contains(namedInfo(custom), namedInfo(nonEmptyDefault), namedInfo(empty), namedInfo(single)));
         });
     }
 
@@ -216,7 +216,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo custom = annotationInfo().name(CustomEnumArrayValueAnnotation.class.getName()).value("value", new EnumEntry[]{pizza, bar}).build();
 
         loadAndCheckAnnotations(WithEnumArrayValueAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty), annotatedInfo(single)));
+            assertThat(annotations, contains(namedInfo(custom), namedInfo(nonEmptyDefault), namedInfo(empty), namedInfo(single)));
         });
     }
 
@@ -232,7 +232,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo custom = annotationInfo().name(CustomAnnotationArrayValueAnnotation.class.getName()).value("value", new AnnotationInfo[]{pizza, bar}).build();
 
         loadAndCheckAnnotations(WithAnnotationArrayValueAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(annotatedInfo(custom), annotatedInfo(nonEmptyDefault), annotatedInfo(empty), annotatedInfo(single)));
+            assertThat(annotations, contains(namedInfo(custom), namedInfo(nonEmptyDefault), namedInfo(empty), namedInfo(single)));
         });
     }
 
@@ -276,13 +276,13 @@ public class AnnotationTest extends AbstractProcessorTest {
 
         loadAndCheckAnnotations(WithPrimitiveArrayValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(
-                annotatedInfo(byteAnnotation),
-                annotatedInfo(charAnnotation),
-                annotatedInfo(doubleAnnotation),
-                annotatedInfo(floatAnnotation),
-                annotatedInfo(intAnnotation),
-                annotatedInfo(longAnnotation),
-                annotatedInfo(shortAnnotation)
+                namedInfo(byteAnnotation),
+                namedInfo(charAnnotation),
+                namedInfo(doubleAnnotation),
+                namedInfo(floatAnnotation),
+                namedInfo(intAnnotation),
+                namedInfo(longAnnotation),
+                namedInfo(shortAnnotation)
             ));
         });
     }

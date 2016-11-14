@@ -15,14 +15,14 @@
  */
 package org.kordamp.naum.diff;
 
-import org.kordamp.naum.model.AnnotatedInfo;
+import org.kordamp.naum.model.NamedInfo;
 
 import java.util.Collection;
 
 /**
  * @author Andres Almiray
  */
-public interface Differ<T extends AnnotatedInfo> {
+public interface Differ<T extends NamedInfo> {
     T getPrevious();
 
     T getNext();
