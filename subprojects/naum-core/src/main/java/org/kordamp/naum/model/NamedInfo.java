@@ -28,7 +28,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Stephan Classen
  */
 @RequiredArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "contentHash")
 @ToString(exclude = "contentHash")
 public abstract class NamedInfo<S extends NamedInfo<S>> implements Comparable<S> {
     protected static final String[] EMPTY = new String[0];
