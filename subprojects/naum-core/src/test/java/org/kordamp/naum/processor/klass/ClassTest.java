@@ -16,9 +16,9 @@
 package org.kordamp.naum.processor.klass;
 
 import org.junit.Test;
-import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.model.ClassInfo;
 import org.kordamp.naum.model.ConstructorInfo;
+import org.kordamp.naum.model.EnumValue;
 import org.kordamp.naum.model.Modifiers;
 import org.kordamp.naum.processor.AbstractProcessorTest;
 
@@ -221,7 +221,7 @@ public class ClassTest extends AbstractProcessorTest {
             .build();
         classInfo.addToAnnotations(annotationInfo()
             .name(Retention.class.getName())
-            .enumValue("value", new AnnotationInfo.EnumEntry(RetentionPolicy.class.getName(), "SOURCE"))
+            .annotationValue("value", new EnumValue(RetentionPolicy.class.getName(), "SOURCE"))
             .build());
         classInfo.addToAnnotations(annotationInfo()
             .name(Target.class.getName())

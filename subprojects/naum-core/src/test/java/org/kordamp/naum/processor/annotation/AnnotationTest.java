@@ -16,8 +16,8 @@
 package org.kordamp.naum.processor.annotation;
 
 import org.junit.Test;
+import org.kordamp.naum.model.EnumValue;
 import org.kordamp.naum.model.AnnotationInfo;
-import org.kordamp.naum.model.AnnotationInfo.EnumEntry;
 import org.kordamp.naum.processor.AbstractProcessorTest;
 import org.kordamp.naum.processor.annotation.WithAnnotationArrayValueAnnotation.AnotherAnnotation;
 import org.kordamp.naum.processor.annotation.WithAnnotationArrayValueAnnotation.CustomAnnotationArrayValueAnnotation;
@@ -74,15 +74,12 @@ import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 import static org.kordamp.naum.NamedInfoMatcher.namedInfo;
 import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
-import static org.kordamp.naum.model.AnnotationInfo.newEnumEntry;
+import static org.kordamp.naum.model.AnnotationValue.newEnumValue;
 import static org.kordamp.naum.processor.annotation.WithEnumArrayValueAnnotation.AnotherEnum.BAR;
 import static org.kordamp.naum.processor.annotation.WithEnumArrayValueAnnotation.AnotherEnum.GARTEN;
 import static org.kordamp.naum.processor.annotation.WithEnumArrayValueAnnotation.AnotherEnum.PIZZA;
 import static org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.SomeEnum.NAUM;
 
-/**
- * @author Stephan Classen
- */
 public class AnnotationTest extends AbstractProcessorTest {
 
     @Test
@@ -138,8 +135,8 @@ public class AnnotationTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckWithEnumValueAnnotation() throws Exception {
         final AnnotationInfo defaultEnum = annotationInfo().name(DefaultEnumValueAnnotation.class.getName()).build();
-        final EnumEntry enumValue = newEnumEntry(SomeEnum.class.getName(), NAUM.name());
-        final AnnotationInfo customEnum = annotationInfo().name(CustomEnumValueAnnotation.class.getName()).enumValue("value", enumValue).build();
+        final EnumValue enumValue = newEnumValue(SomeEnum.class.getName(), NAUM.name());
+        final AnnotationInfo customEnum = annotationInfo().name(CustomEnumValueAnnotation.class.getName()).annotationValue("value", enumValue).build();
 
         loadAndCheckAnnotations(WithEnumValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(namedInfo(customEnum), namedInfo(defaultEnum)));
@@ -148,12 +145,12 @@ public class AnnotationTest extends AbstractProcessorTest {
 
     @Test
     public void loadAndCheckWithAnnotationValueAnnotation() throws Exception {
-        final AnnotationInfo defaultEnum = annotationInfo().name(DefaultAnnotationValueAnnotation.class.getName()).build();
+        final AnnotationInfo defaultAnno = annotationInfo().name(DefaultAnnotationValueAnnotation.class.getName()).build();
         final AnnotationInfo innerAnnotation = annotationInfo().name(InnerAnnotation.class.getName()).value("value", "Pizza").build();
-        final AnnotationInfo customEnum = annotationInfo().name(CustomAnnotationValueAnnotation.class.getName()).value("value", innerAnnotation).build();
+        final AnnotationInfo customAnno = annotationInfo().name(CustomAnnotationValueAnnotation.class.getName()).annotationValue("value", innerAnnotation).build();
 
         loadAndCheckAnnotations(WithAnnotationValueAnnotation.class, (annotations) -> {
-            assertThat(annotations, contains(namedInfo(customEnum), namedInfo(defaultEnum)));
+            assertThat(annotations, contains(namedInfo(customAnno), namedInfo(defaultAnno)));
         });
     }
 
@@ -206,14 +203,14 @@ public class AnnotationTest extends AbstractProcessorTest {
 
     @Test
     public void loadAndCheckWithEnumArrayValueAnnotation() throws Exception {
-        final EnumEntry garten = newEnumEntry(AnotherEnum.class.getName(), GARTEN.name());
-        final EnumEntry pizza = newEnumEntry(AnotherEnum.class.getName(), PIZZA.name());
-        final EnumEntry bar = newEnumEntry(AnotherEnum.class.getName(), BAR.name());
+        final EnumValue garten = newEnumValue(AnotherEnum.class.getName(), GARTEN.name());
+        final EnumValue pizza = newEnumValue(AnotherEnum.class.getName(), PIZZA.name());
+        final EnumValue bar = newEnumValue(AnotherEnum.class.getName(), BAR.name());
 
         final AnnotationInfo nonEmptyDefault = annotationInfo().name(DefaultEnumArrayValueAnnotation.class.getName()).build();
-        final AnnotationInfo empty = annotationInfo().name(EmptyEnumArrayValueAnnotation.class.getName()).value("value", new EnumEntry[0]).build();
-        final AnnotationInfo single = annotationInfo().name(SingleEnumArrayValueAnnotation.class.getName()).value("value", new EnumEntry[]{garten}).build();
-        final AnnotationInfo custom = annotationInfo().name(CustomEnumArrayValueAnnotation.class.getName()).value("value", new EnumEntry[]{pizza, bar}).build();
+        final AnnotationInfo empty = annotationInfo().name(EmptyEnumArrayValueAnnotation.class.getName()).value("value", new EnumValue[0]).build();
+        final AnnotationInfo single = annotationInfo().name(SingleEnumArrayValueAnnotation.class.getName()).value("value", new EnumValue[]{garten}).build();
+        final AnnotationInfo custom = annotationInfo().name(CustomEnumArrayValueAnnotation.class.getName()).value("value", new EnumValue[]{pizza, bar}).build();
 
         loadAndCheckAnnotations(WithEnumArrayValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(namedInfo(custom), namedInfo(nonEmptyDefault), namedInfo(empty), namedInfo(single)));

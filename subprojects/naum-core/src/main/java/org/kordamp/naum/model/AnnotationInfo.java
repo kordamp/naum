@@ -27,32 +27,54 @@ import java.util.Map;
 
 /**
  * @author Andres Almiray
+ * @author Stephan Classen
+ * @author Vitaly Tsaplin
+ * @author Alexey Dubrovskiy
  */
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class AnnotationInfo extends NamedInfo<AnnotationInfo> {
-    private final Map<String, Object> values = new LinkedHashMap<>();
-    private final Map<String, EnumEntry> enumValues = new LinkedHashMap<>();
+public class AnnotationInfo extends NamedInfo<AnnotationInfo> implements AnnotationValue {
+    private final Map<String, AnnotationValue> values = new LinkedHashMap<>();
 
     private AnnotationInfo(String name) {
         super(name);
     }
 
     @Builder(builderMethodName = "annotationInfo")
-    public static AnnotationInfo create(@Nonnull String name, @Nonnull @Singular Map<String, Object> values, @Nonnull @Singular Map<String, EnumEntry> enumValues) {
+    public static AnnotationInfo create(@Nonnull String name,
+                                        @Nonnull @Singular Map<String, Object> values,
+                                        @Nonnull @Singular Map<String, AnnotationValue> annotationValues) {
         if (name.startsWith("L") && name.endsWith(";")) {
             name = name.substring(1, name.length() - 1);
         }
         name = name.replace('/', '.');
         AnnotationInfo annotationInfo = new AnnotationInfo(name);
         if (values != null) {
-            annotationInfo.getValues().putAll(values);
+            for (Map.Entry<String, Object> entry : values.entrySet()) {
+                AnnotationValue annotationValue = AnnotationValue.newSimpleValue(entry.getValue().getClass(), entry.getValue());
+                annotationInfo.getValues().put(entry.getKey(), annotationValue);
+            }
         }
-        if (enumValues != null) {
-            annotationInfo.getEnumValues().putAll(enumValues);
+        if (annotationValues != null) {
+            annotationInfo.getValues().putAll(annotationValues);
         }
         return annotationInfo;
+    }
+
+    @Override
+    public String getType() {
+        return getName();
+    }
+
+    @Override
+    public Object getValue() {
+        return values;
+    }
+
+    @Override
+    public String getValueAsString() {
+        return values.toString();
     }
 
     @Override
@@ -64,10 +86,6 @@ public class AnnotationInfo extends NamedInfo<AnnotationInfo> {
             b.append("#V=")
                 .append(values);
         }
-        if (!enumValues.isEmpty()) {
-            b.append("#EV=")
-                .append(enumValues);
-        }
 
         b.append("}");
 
@@ -78,19 +96,20 @@ public class AnnotationInfo extends NamedInfo<AnnotationInfo> {
         StringBuilder b = new StringBuilder("@")
             .append(getName());
 
-        if (values.size() > 0 || enumValues.size() > 0) {
+        if (values.size() > 0) {
             b.append("(");
 
             int i = 0;
-            for (Map.Entry<String, Object> e : values.entrySet()) {
+            for (Map.Entry<String, AnnotationValue> e : values.entrySet()) {
                 if (i != 0) {
                     b.append(", ");
                 }
                 b.append(e.getKey())
                     .append("=");
 
-                String quotes = e.getValue() instanceof String ? "\"" : "";
-                quotes = e.getValue() != null && Character.TYPE.isAssignableFrom(e.getValue().getClass()) ? "'" : quotes;
+                final String type = e.getValue().getType();
+                String quotes = type.equals(String.class.getName()) ? "\"" : "";
+                quotes = type.equals(Character.class.getName()) ? "'" : quotes;
 
                 b.append(quotes)
                     .append(e.getValue())
@@ -99,35 +118,9 @@ public class AnnotationInfo extends NamedInfo<AnnotationInfo> {
                 i++;
             }
 
-            i = 0;
-            for (Map.Entry<String, EnumEntry> e : enumValues.entrySet()) {
-                if (i != 0) {
-                    b.append(", ");
-                }
-                b.append(e.getKey())
-                    .append("=")
-                    .append(e.getValue());
-
-                i++;
-            }
-
             b.append(")");
         }
 
         return b.toString();
-    }
-
-    public static EnumEntry newEnumEntry(String type, String value) {
-        return new EnumEntry(type, value);
-    }
-
-    @Data
-    public static class EnumEntry {
-        private final String type;
-        private final String value;
-
-        public String toString() {
-            return type + "." + value;
-        }
     }
 }

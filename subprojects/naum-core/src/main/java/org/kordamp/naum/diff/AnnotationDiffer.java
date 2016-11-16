@@ -36,6 +36,8 @@ import static org.kordamp.naum.diff.Diff.Type.REMOVED;
  * @author Andres Almiray
  * @author Maxim Moschko
  * @author Stephan Classen
+ * @author Vitaly Tsaplin
+ * @author Alexey Dubrovskiy
  */
 @Data(staticConstructor = "annotationDiffer")
 @EqualsAndHashCode
@@ -43,9 +45,6 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
     public static final String KEY_ANNOTATION_VALUE_ADDED = "annotation.value.added";
     public static final String KEY_ANNOTATION_VALUE_REMOVED = "annotation.value.removed";
     public static final String KEY_ANNOTATION_VALUE_MODIFIED = "annotation.value.modified";
-    public static final String KEY_ANNOTATION_ENUM_VALUE_ADDED = "annotation.enum.value.added";
-    public static final String KEY_ANNOTATION_ENUM_VALUE_REMOVED = "annotation.enum.value.removed";
-    public static final String KEY_ANNOTATION_ENUM_VALUE_MODIFIED = "annotation.enum.value.modified";
 
     private final AnnotationInfo previous;
     private final AnnotationInfo next;
@@ -60,9 +59,6 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
 
         // 1. values
         checkValues(list);
-
-        // 2. enumValues
-        checkEnumValues(list);
 
         return list;
     }
@@ -112,55 +108,6 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
                         .messageArg(prevValue)
                         .messageArg(nextValue.getClass().getName())
                         .messageArg(nextValue)
-                        .build()
-                );
-            }
-        }
-    }
-
-    private void checkEnumValues(Collection<Diff> list) {
-        Set<String> prevKeySet = previous.getEnumValues().keySet();
-        Set<String> nextKeySet = next.getEnumValues().keySet();
-
-        Collection<String> removedKeys = CollectionUtils.subtract(prevKeySet, nextKeySet);
-        Collection<String> addedKeys = CollectionUtils.subtract(nextKeySet, prevKeySet);
-        Collection<String> sameKeys = CollectionUtils.intersection(nextKeySet, prevKeySet);
-
-        for (String key : removedKeys) {
-            list.add(Diff.diff()
-                .severity(ERROR)
-                .type(REMOVED)
-                .messageKey(KEY_ANNOTATION_ENUM_VALUE_REMOVED)
-                .messageArg(getElementName())
-                .messageArg(key)
-                .build()
-            );
-        }
-
-        for (String key : addedKeys) {
-            list.add(Diff.diff()
-                .severity(ERROR)
-                .type(ADDED)
-                .messageKey(KEY_ANNOTATION_ENUM_VALUE_ADDED)
-                .messageArg(getElementName())
-                .messageArg(key)
-                .build()
-            );
-        }
-
-        for (String key : sameKeys) {
-            AnnotationInfo.EnumEntry prevValue = previous.getEnumValues().get(key);
-            AnnotationInfo.EnumEntry nextValue = next.getEnumValues().get(key);
-            if (!Objects.equals(prevValue, nextValue)) {
-                list.add(
-                    Diff.diff()
-                        .severity(ERROR)
-                        .type(MODIFIED)
-                        .messageKey(KEY_ANNOTATION_ENUM_VALUE_MODIFIED)
-                        .messageArg(getElementName())
-                        .messageArg(key)
-                        .messageArg(prevValue.toString())
-                        .messageArg(nextValue.toString())
                         .build()
                 );
             }
