@@ -54,7 +54,7 @@ public class AnnotationProcessor extends AnnotationVisitor {
         if (value.getClass().isArray()) {
             handleArray(name, value);
         } else {
-            annotation.getValues().put(name, newSimpleValue(value.getClass(), value));
+            annotation.getValues().put(name, newSimpleValue(value));
         }
     }
 
@@ -111,7 +111,7 @@ public class AnnotationProcessor extends AnnotationVisitor {
 
         @Override
         public void visit(String name, Object value) {
-            values.add(newSimpleValue(value.getClass(), value));
+            values.add(newSimpleValue(value));
         }
 
         @Override

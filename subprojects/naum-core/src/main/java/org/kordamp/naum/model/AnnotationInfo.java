@@ -55,7 +55,7 @@ public class AnnotationInfo extends NamedInfo<AnnotationInfo> implements Annotat
         AnnotationInfo annotationInfo = new AnnotationInfo(name);
         if (values != null) {
             for (Map.Entry<String, Object> entry : values.entrySet()) {
-                AnnotationValue annotationValue = AnnotationValue.newSimpleValue(entry.getValue().getClass(), entry.getValue());
+                AnnotationValue annotationValue = AnnotationValue.newSimpleValue(entry.getValue());
                 annotationInfo.getValues().put(entry.getKey(), annotationValue);
             }
         }
