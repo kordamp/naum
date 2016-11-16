@@ -19,6 +19,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.kordamp.naum.model.AnnotationInfo;
+import org.kordamp.naum.model.AnnotationValue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,8 +95,8 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
         }
 
         for (String key : sameKeys) {
-            Object prevValue = previous.getValues().get(key);
-            Object nextValue = next.getValues().get(key);
+            AnnotationValue prevValue = previous.getValues().get(key);
+            AnnotationValue nextValue = next.getValues().get(key);
             if (!Objects.equals(prevValue, nextValue)) {
                 list.add(
                     Diff.diff()
@@ -104,10 +105,10 @@ public class AnnotationDiffer implements Differ<AnnotationInfo> {
                         .messageKey(KEY_ANNOTATION_VALUE_MODIFIED)
                         .messageArg(getElementName())
                         .messageArg(key)
-                        .messageArg(prevValue.getClass().getName())
-                        .messageArg(prevValue)
-                        .messageArg(nextValue.getClass().getName())
-                        .messageArg(nextValue)
+                        .messageArg(prevValue.getType())
+                        .messageArg(prevValue.getValue())
+                        .messageArg(nextValue.getType())
+                        .messageArg(nextValue.getValue())
                         .build()
                 );
             }
