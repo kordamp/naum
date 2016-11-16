@@ -16,8 +16,10 @@
 package org.kordamp.naum.processor.annotation;
 
 import org.junit.Test;
-import org.kordamp.naum.model.EnumValue;
 import org.kordamp.naum.model.AnnotationInfo;
+import org.kordamp.naum.model.AnnotationValue;
+import org.kordamp.naum.model.ArrayValue;
+import org.kordamp.naum.model.EnumValue;
 import org.kordamp.naum.processor.AbstractProcessorTest;
 import org.kordamp.naum.processor.annotation.WithAnnotationArrayValueAnnotation.AnotherAnnotation;
 import org.kordamp.naum.processor.annotation.WithAnnotationArrayValueAnnotation.CustomAnnotationArrayValueAnnotation;
@@ -67,6 +69,8 @@ import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.EmptyDefa
 import org.kordamp.naum.processor.annotation.WithStringValueAnnotation.NonEmptyDefaultStringValueAnnotation;
 import org.objectweb.asm.Type;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -74,7 +78,9 @@ import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 import static org.kordamp.naum.NamedInfoMatcher.namedInfo;
 import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
+import static org.kordamp.naum.model.AnnotationValue.newArrayValue;
 import static org.kordamp.naum.model.AnnotationValue.newEnumValue;
+import static org.kordamp.naum.model.AnnotationValue.newSimpleValue;
 import static org.kordamp.naum.processor.annotation.WithEnumArrayValueAnnotation.AnotherEnum.BAR;
 import static org.kordamp.naum.processor.annotation.WithEnumArrayValueAnnotation.AnotherEnum.GARTEN;
 import static org.kordamp.naum.processor.annotation.WithEnumArrayValueAnnotation.AnotherEnum.PIZZA;
@@ -180,9 +186,9 @@ public class AnnotationTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckWithStringArrayValueAnnotation() throws Exception {
         final AnnotationInfo nonEmptyDefault = annotationInfo().name(DefaultStringArrayValueAnnotation.class.getName()).build();
-        final AnnotationInfo empty = annotationInfo().name(EmptyStringArrayValueAnnotation.class.getName()).value("value", new String[0]).build();
-        final AnnotationInfo single = annotationInfo().name(SingleStringArrayValueAnnotation.class.getName()).value("value", new String[]{"Garten"}).build();
-        final AnnotationInfo custom = annotationInfo().name(CustomStringArrayValueAnnotation.class.getName()).value("value", new String[]{"Pizza", "Bar"}).build();
+        final AnnotationInfo empty = annotationInfo().name(EmptyStringArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new String[0])).build();
+        final AnnotationInfo single = annotationInfo().name(SingleStringArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new String[]{"Garten"})).build();
+        final AnnotationInfo custom = annotationInfo().name(CustomStringArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new String[]{"Pizza", "Bar"})).build();
 
         loadAndCheckAnnotations(WithStringArrayValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(namedInfo(custom), namedInfo(nonEmptyDefault), namedInfo(empty), namedInfo(single)));
@@ -192,9 +198,9 @@ public class AnnotationTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckWithClassArrayValueAnnotation() throws Exception {
         final AnnotationInfo nonEmptyDefault = annotationInfo().name(DefaultClassArrayValueAnnotation.class.getName()).build();
-        final AnnotationInfo empty = annotationInfo().name(EmptyClassArrayValueAnnotation.class.getName()).value("value", new Class[0]).build();
-        final AnnotationInfo single = annotationInfo().name(SingleClassArrayValueAnnotation.class.getName()).value("value", new Class[]{Exception.class}).build();
-        final AnnotationInfo custom = annotationInfo().name(CustomClassArrayValueAnnotation.class.getName()).value("value", new Class[]{IllegalStateException.class, IllegalArgumentException.class}).build();
+        final AnnotationInfo empty = annotationInfo().name(EmptyClassArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new Class[0])).build();
+        final AnnotationInfo single = annotationInfo().name(SingleClassArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new Class[]{Exception.class})).build();
+        final AnnotationInfo custom = annotationInfo().name(CustomClassArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new Class[]{IllegalStateException.class, IllegalArgumentException.class})).build();
 
         loadAndCheckAnnotations(WithClassArrayValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(namedInfo(custom), namedInfo(nonEmptyDefault), namedInfo(empty), namedInfo(single)));
@@ -208,9 +214,9 @@ public class AnnotationTest extends AbstractProcessorTest {
         final EnumValue bar = newEnumValue(AnotherEnum.class.getName(), BAR.name());
 
         final AnnotationInfo nonEmptyDefault = annotationInfo().name(DefaultEnumArrayValueAnnotation.class.getName()).build();
-        final AnnotationInfo empty = annotationInfo().name(EmptyEnumArrayValueAnnotation.class.getName()).value("value", new EnumValue[0]).build();
-        final AnnotationInfo single = annotationInfo().name(SingleEnumArrayValueAnnotation.class.getName()).value("value", new EnumValue[]{garten}).build();
-        final AnnotationInfo custom = annotationInfo().name(CustomEnumArrayValueAnnotation.class.getName()).value("value", new EnumValue[]{pizza, bar}).build();
+        final AnnotationInfo empty = annotationInfo().name(EmptyEnumArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new EnumValue[0])).build();
+        final AnnotationInfo single = annotationInfo().name(SingleEnumArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new EnumValue[]{garten})).build();
+        final AnnotationInfo custom = annotationInfo().name(CustomEnumArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new EnumValue[]{pizza, bar})).build();
 
         loadAndCheckAnnotations(WithEnumArrayValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(namedInfo(custom), namedInfo(nonEmptyDefault), namedInfo(empty), namedInfo(single)));
@@ -224,9 +230,9 @@ public class AnnotationTest extends AbstractProcessorTest {
         final AnnotationInfo bar = annotationInfo().name(AnotherAnnotation.class.getName()).value("value", "bar").build();
 
         final AnnotationInfo nonEmptyDefault = annotationInfo().name(DefaultAnnotationArrayValueAnnotation.class.getName()).build();
-        final AnnotationInfo empty = annotationInfo().name(EmptyAnnotationArrayValueAnnotation.class.getName()).value("value", new AnnotationInfo[0]).build();
-        final AnnotationInfo single = annotationInfo().name(SingleAnnotationArrayValueAnnotation.class.getName()).value("value", new AnnotationInfo[]{garten}).build();
-        final AnnotationInfo custom = annotationInfo().name(CustomAnnotationArrayValueAnnotation.class.getName()).value("value", new AnnotationInfo[]{pizza, bar}).build();
+        final AnnotationInfo empty = annotationInfo().name(EmptyAnnotationArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new AnnotationInfo[0])).build();
+        final AnnotationInfo single = annotationInfo().name(SingleAnnotationArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new AnnotationInfo[]{garten})).build();
+        final AnnotationInfo custom = annotationInfo().name(CustomAnnotationArrayValueAnnotation.class.getName()).annotationValue("value", asArrayValue(new AnnotationInfo[]{pizza, bar})).build();
 
         loadAndCheckAnnotations(WithAnnotationArrayValueAnnotation.class, (annotations) -> {
             assertThat(annotations, contains(namedInfo(custom), namedInfo(nonEmptyDefault), namedInfo(empty), namedInfo(single)));
@@ -236,39 +242,39 @@ public class AnnotationTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckWithPrimitiveArrayValueAnnotation() throws Exception {
         final AnnotationInfo byteAnnotation = annotationInfo().name(ByteArrayAnnotation.class.getName())
-            .value("emptyByteArray", new byte[0])
-            .value("singleByteArray", new byte[]{0})
-            .value("customByteArray", new byte[]{1, 2})
+            .annotationValue("emptyByteArray", asArrayValue(new byte[0]))
+            .annotationValue("singleByteArray", asArrayValue(new byte[]{0}))
+            .annotationValue("customByteArray", asArrayValue(new byte[]{1, 2}))
             .build();
         final AnnotationInfo charAnnotation = annotationInfo().name(CharArrayAnnotation.class.getName())
-            .value("emptyCharArray", new char[0])
-            .value("singleCharArray", new char[]{1})
-            .value("customCharArray", new char[]{2, 3})
+            .annotationValue("emptyCharArray", asArrayValue(new char[0]))
+            .annotationValue("singleCharArray", asArrayValue(new char[]{1}))
+            .annotationValue("customCharArray", asArrayValue(new char[]{2, 3}))
             .build();
         final AnnotationInfo shortAnnotation = annotationInfo().name(ShortArrayAnnotation.class.getName())
-            .value("emptyShortArray", new short[0])
-            .value("singleShortArray", new short[]{2})
-            .value("customShortArray", new short[]{3, 4})
+            .annotationValue("emptyShortArray", asArrayValue(new short[0]))
+            .annotationValue("singleShortArray", asArrayValue(new short[]{2}))
+            .annotationValue("customShortArray", asArrayValue(new short[]{3, 4}))
             .build();
         final AnnotationInfo intAnnotation = annotationInfo().name(IntArrayAnnotation.class.getName())
-            .value("emptyIntArray", new int[0])
-            .value("singleIntArray", new int[]{3})
-            .value("customIntArray", new int[]{4, 5})
+            .annotationValue("emptyIntArray", asArrayValue(new int[0]))
+            .annotationValue("singleIntArray", asArrayValue(new int[]{3}))
+            .annotationValue("customIntArray", asArrayValue(new int[]{4, 5}))
             .build();
         final AnnotationInfo longAnnotation = annotationInfo().name(LongArrayAnnotation.class.getName())
-            .value("emptyLongArray", new long[0])
-            .value("singleLongArray", new long[]{5})
-            .value("customLongArray", new long[]{5, 6})
+            .annotationValue("emptyLongArray", asArrayValue(new long[0]))
+            .annotationValue("singleLongArray", asArrayValue(new long[]{4}))
+            .annotationValue("customLongArray", asArrayValue(new long[]{5, 6}))
             .build();
         final AnnotationInfo floatAnnotation = annotationInfo().name(FloatArrayAnnotation.class.getName())
-            .value("emptyFloatArray", new float[0])
-            .value("singleFloatArray", new float[]{6.1f})
-            .value("customFloatArray", new float[]{6.2f, 6.3f})
+            .annotationValue("emptyFloatArray", asArrayValue(new float[0]))
+            .annotationValue("singleFloatArray", asArrayValue(new float[]{6.1f}))
+            .annotationValue("customFloatArray", asArrayValue(new float[]{6.2f, 6.3f}))
             .build();
         final AnnotationInfo doubleAnnotation = annotationInfo().name(DoubleArrayAnnotation.class.getName())
-            .value("emptyDoubleArray", new double[0])
-            .value("singleDoubleArray", new double[]{7.1})
-            .value("customDoubleArray", new double[]{7.2, 7.3})
+            .annotationValue("emptyDoubleArray", asArrayValue(new double[0]))
+            .annotationValue("singleDoubleArray", asArrayValue(new double[]{7.1}))
+            .annotationValue("customDoubleArray", asArrayValue(new double[]{7.2, 7.3}))
             .build();
 
         loadAndCheckAnnotations(WithPrimitiveArrayValueAnnotation.class, (annotations) -> {
@@ -284,6 +290,40 @@ public class AnnotationTest extends AbstractProcessorTest {
         });
     }
 
+    private ArrayValue asArrayValue(Object arr) {
+        final Class<?> arrClass = arr.getClass();
+        if (!arrClass.isArray()) {
+            throw new RuntimeException("arr is not an array");
+        }
+
+        final List<AnnotationValue> values = new ArrayList<>();
+
+        final Class<?> componentType = arrClass.getComponentType();
+        final int len = Array.getLength(arr);
+        if (componentType.isPrimitive() || componentType == String.class) {
+            for (int i = 0; i < len; i++) {
+                values.add(newSimpleValue(Array.get(arr, i)));
+            }
+        } else if (componentType.isEnum()) {
+            for (int i = 0; i < len; i++) {
+                final Object o = Array.get(arr, i);
+                values.add(newEnumValue(o.getClass().getName(), o.toString()));
+            }
+        } else if (componentType == Class.class) {
+            for (int i = 0; i < len; i++) {
+                values.add(newSimpleValue(Type.getType((Class) Array.get(arr, i))));
+            }
+        } else if (AnnotationValue.class.isAssignableFrom(componentType)) {
+            for (int i = 0; i < len; i++) {
+                values.add((AnnotationValue) Array.get(arr, i));
+            }
+        } else {
+            throw new RuntimeException("unsupported component type " + componentType);
+        }
+
+        return newArrayValue(values);
+    }
+
     private void loadAndCheckAnnotations(Class<?> clazz, AnnotationChecks checks) throws Exception {
         final String targetClassPath = clazz.getCanonicalName().replaceAll("\\.", "/");
         loadAndCheck(targetClassPath + ".class", (klass) -> {
@@ -291,7 +331,7 @@ public class AnnotationTest extends AbstractProcessorTest {
         });
     }
 
-    public interface AnnotationChecks {
+    private interface AnnotationChecks {
         void check(List<AnnotationInfo> annotations);
     }
 }

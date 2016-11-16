@@ -22,7 +22,10 @@ import lombok.Singular;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -84,7 +87,29 @@ public class AnnotationInfo extends NamedInfo<AnnotationInfo> implements Annotat
 
         if (!values.isEmpty()) {
             b.append("#V=")
-                .append(values);
+                .append(getValueContent());
+        }
+
+        b.append("}");
+
+        return b.toString();
+    }
+
+    private String getValueContent() {
+        final List<String> keys = new ArrayList<>(values.keySet());
+        Collections.sort(keys);
+        final StringBuilder b = new StringBuilder("{");
+        boolean isFirst = true;
+
+        for (String key : keys) {
+            if (!isFirst) {
+                b.append(", ");
+            }
+            b.append(key)
+                .append("=")
+                .append(values.get(key));
+
+            isFirst = false;
         }
 
         b.append("}");

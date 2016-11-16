@@ -18,6 +18,8 @@ package org.kordamp.naum.model;
 
 import org.objectweb.asm.Type;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @author Stephan Classen
@@ -40,6 +42,15 @@ public interface AnnotationValue {
     static SimpleValue newSimpleValue(Class<?> type, Object value) {
         Type t = Type.getType(type);
         return new SimpleValue(t.getClassName(), value);
+    }
+
+    static SimpleValue newSimpleValue(Object value) {
+        Type t = Type.getType(value.getClass());
+        return new SimpleValue(t.getClassName(), value);
+    }
+
+    static ArrayValue newArrayValue(List<AnnotationValue> value) {
+        return new ArrayValue(value);
     }
 
 }

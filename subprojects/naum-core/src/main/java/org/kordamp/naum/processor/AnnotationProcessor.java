@@ -16,11 +16,17 @@
 package org.kordamp.naum.processor;
 
 import org.kordamp.naum.model.AnnotationInfo;
+import org.kordamp.naum.model.AnnotationValue;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.kordamp.naum.model.AnnotationValue.newArrayValue;
 import static org.kordamp.naum.model.AnnotationValue.newEnumValue;
 import static org.kordamp.naum.model.AnnotationValue.newSimpleValue;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
@@ -45,7 +51,27 @@ public class AnnotationProcessor extends AnnotationVisitor {
 
     @Override
     public void visit(String name, Object value) {
-        annotation.getValues().put(name, newSimpleValue(value.getClass(), value));
+        if (value.getClass().isArray()) {
+            handleArray(name, value);
+        } else {
+            annotation.getValues().put(name, newSimpleValue(value.getClass(), value));
+        }
+    }
+
+    private void handleArray(String name, Object array) {
+        final Class<?> arrClass = array.getClass();
+        final List<AnnotationValue> values = new ArrayList<>();
+
+        final Class<?> componentType = arrClass.getComponentType();
+        final int len = Array.getLength(array);
+        if (componentType.isPrimitive() || componentType == String.class) {
+            for (int i = 0; i < len; i++) {
+                values.add(newSimpleValue(Array.get(array, i)));
+            }
+        } else {
+            throw new RuntimeException("unsupported component type " + componentType);
+        }
+        annotation.getValues().put(name, newArrayValue(values));
     }
 
     @Override
@@ -68,6 +94,50 @@ public class AnnotationProcessor extends AnnotationVisitor {
 
     @Override
     public AnnotationVisitor visitArray(String name) {
-        throw new RuntimeException("Not implemented yet!");
+        final List<AnnotationValue> values = new ArrayList<>();
+        final AnnotationArrayValueProcessor processor = new AnnotationArrayValueProcessor(values);
+        annotation.getValues().put(name, newArrayValue(values));
+        return processor;
+    }
+
+    private static class AnnotationArrayValueProcessor extends AnnotationVisitor {
+
+        private final List<AnnotationValue> values;
+
+        public AnnotationArrayValueProcessor(List<AnnotationValue> values) {
+            super(Opcodes.ASM5);
+            this.values = values;
+        }
+
+        @Override
+        public void visit(String name, Object value) {
+            values.add(newSimpleValue(value.getClass(), value));
+        }
+
+        @Override
+        public void visitEnum(String name, String desc, String value) {
+            SignatureReader r = new SignatureReader(desc);
+            CustomTraceSignatureVisitor sv = new CustomTraceSignatureVisitor(ACC_PUBLIC);
+            r.accept(sv);
+
+            values.add(newEnumValue(sv.getTypeOrSuperclass(), value));
+        }
+
+        @Override
+        public AnnotationVisitor visitAnnotation(String name, String desc) {
+            final String annotationName = Type.getType(desc).getClassName();
+            final AnnotationInfo innerAnnotation = AnnotationInfo.annotationInfo().name(annotationName).build();
+            final AnnotationProcessor processor = new AnnotationProcessor(innerAnnotation);
+            values.add(innerAnnotation);
+            return processor;
+        }
+
+        @Override
+        public AnnotationVisitor visitArray(String name) {
+            final List<AnnotationValue> values = new ArrayList<>();
+            final AnnotationArrayValueProcessor processor = new AnnotationArrayValueProcessor(values);
+            values.add(newArrayValue(values));
+            return processor;
+        }
     }
 }
