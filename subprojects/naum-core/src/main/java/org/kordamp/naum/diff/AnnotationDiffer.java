@@ -16,7 +16,6 @@
 package org.kordamp.naum.diff;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.model.AnnotationValue;
@@ -41,7 +40,6 @@ import static org.kordamp.naum.diff.Diff.Type.REMOVED;
  * @author Alexey Dubrovskiy
  */
 @Data(staticConstructor = "annotationDiffer")
-@EqualsAndHashCode
 public class AnnotationDiffer implements Differ<AnnotationInfo> {
     public static final String KEY_ANNOTATION_VALUE_ADDED = "annotation.value.added";
     public static final String KEY_ANNOTATION_VALUE_REMOVED = "annotation.value.removed";
