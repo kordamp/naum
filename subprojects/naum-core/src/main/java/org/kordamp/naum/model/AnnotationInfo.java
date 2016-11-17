@@ -99,8 +99,8 @@ public class AnnotationInfo extends NamedInfo<AnnotationInfo> implements Annotat
         final List<String> keys = new ArrayList<>(values.keySet());
         Collections.sort(keys);
         final StringBuilder b = new StringBuilder("{");
-        boolean isFirst = true;
 
+        boolean isFirst = true;
         for (String key : keys) {
             if (!isFirst) {
                 b.append(", ");
@@ -124,28 +124,43 @@ public class AnnotationInfo extends NamedInfo<AnnotationInfo> implements Annotat
         if (values.size() > 0) {
             b.append("(");
 
-            int i = 0;
+            boolean firstValue = true;
             for (Map.Entry<String, AnnotationValue> e : values.entrySet()) {
-                if (i != 0) {
+                if (!firstValue) {
                     b.append(", ");
                 }
                 b.append(e.getKey())
                     .append("=");
 
-                final String type = e.getValue().getType();
-                String quotes = type.equals(String.class.getName()) ? "\"" : "";
-                quotes = type.equals(Character.class.getName()) ? "'" : quotes;
-
-                b.append(quotes)
-                    .append(e.getValue())
-                    .append(quotes);
-
-                i++;
+                if (e instanceof ArrayValue) {
+                    b.append("[");
+                    boolean firstInArray = true;
+                    for (AnnotationValue value : ((ArrayValue) e).getValue()) {
+                        if (!firstInArray) {
+                            b.append(", ");
+                        }
+                        appendValue(b, value);
+                        firstInArray = false;
+                    }
+                } else {
+                    appendValue(b, e.getValue());
+                }
+                firstValue = false;
             }
 
             b.append(")");
         }
 
         return b.toString();
+    }
+
+    private void appendValue(StringBuilder b, AnnotationValue value) {
+        final String type = value.getType();
+        String quotes = type.equals(String.class.getName()) ? "\"" : "";
+        quotes = type.equals(Character.class.getName()) ? "'" : quotes;
+
+        b.append(quotes)
+            .append(value)
+            .append(quotes);
     }
 }
