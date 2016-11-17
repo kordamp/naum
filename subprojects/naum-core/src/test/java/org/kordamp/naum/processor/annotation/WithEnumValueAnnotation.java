@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.naum.diff;
 
-import org.kordamp.naum.model.NamedInfo;
+package org.kordamp.naum.processor.annotation;
 
-import java.util.Collection;
+import static org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.SomeEnum.NAUM;
+import static org.kordamp.naum.processor.annotation.WithEnumValueAnnotation.SomeEnum.PIZZA;
 
 /**
- * @author Andres Almiray
+ * @author Stephan Classen
  */
-public interface Differ<T extends NamedInfo> {
-    T getPrevious();
+@WithEnumValueAnnotation.DefaultEnumValueAnnotation
+@WithEnumValueAnnotation.CustomEnumValueAnnotation(NAUM)
+class WithEnumValueAnnotation {
 
-    T getNext();
+    @interface DefaultEnumValueAnnotation {
+        SomeEnum value() default PIZZA;
+    }
 
-    Collection<Diff> diff();
+    @interface CustomEnumValueAnnotation {
+        SomeEnum value();
+    }
 
-    default String getElementName() {
-        return getPrevious().getName();
+    enum SomeEnum {
+        NAUM, PIZZA
     }
 }

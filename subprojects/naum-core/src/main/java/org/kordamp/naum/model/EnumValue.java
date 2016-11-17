@@ -13,33 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kordamp.naum.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import lombok.Data;
 
 /**
  * @author Andres Almiray
+ * @author Stephan Classen
+ * @author Vitaly Tsaplin
+ * @author Alexey Dubrovskiy
  */
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public abstract class AnnotatedInfo<S extends AnnotatedInfo<S>> extends NamedInfo<S> {
+@Data
+public class EnumValue implements AnnotationValue {
+    private final String type;
+    private final String value;
 
-    @Getter
-    private final List<AnnotationInfo> annotations = new ArrayList<>();
-
-    protected AnnotatedInfo(String name) {
-        super(name);
+    @Override
+    public String getValueAsString() {
+        return value;
     }
 
-    public S addToAnnotations(AnnotationInfo annotation) {
-        annotations.add(annotation);
-        Collections.sort(annotations);
-        return self();
+    public String toString() {
+        return type + "." + value;
     }
 }

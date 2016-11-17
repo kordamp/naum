@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.naum.diff;
+package org.kordamp.naum.processor.annotation;
 
-import org.kordamp.naum.model.NamedInfo;
-
-import java.util.Collection;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * @author Andres Almiray
+ * @author Stephan Classen
  */
-public interface Differ<T extends NamedInfo> {
-    T getPrevious();
+@WithRetentionRuntimeAnnotation.PlainRuntimeAnnotation
+class WithRetentionRuntimeAnnotation {
 
-    T getNext();
-
-    Collection<Diff> diff();
-
-    default String getElementName() {
-        return getPrevious().getName();
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface PlainRuntimeAnnotation {
     }
 }

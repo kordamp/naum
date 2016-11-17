@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kordamp.naum.processor.annotation;
 
 /**
  * @author Stephan Classen
  */
+@WithStringValueAnnotation.EmptyDefaultStringValueAnnotation
+@WithStringValueAnnotation.NonEmptyDefaultStringValueAnnotation
+@WithStringValueAnnotation.CustomStringValueAnnotation("Pizza")
+class WithStringValueAnnotation {
 
-@PlainSourceAnnotation
-class WithPlainSourceAnno {
-}
+    @interface EmptyDefaultStringValueAnnotation {
+        String value() default "";
+    }
 
-@PlainClassAnnotation
-class WithPlainClassAnno {
-}
+    @interface NonEmptyDefaultStringValueAnnotation {
+        String value() default "Naum";
+    }
 
-@PlainRuntimeAnnotation
-class WithPlainRuntimeAnno {
+    @interface CustomStringValueAnnotation {
+        String value();
+    }
 }

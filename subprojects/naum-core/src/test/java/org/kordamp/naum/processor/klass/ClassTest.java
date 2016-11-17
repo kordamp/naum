@@ -16,22 +16,26 @@
 package org.kordamp.naum.processor.klass;
 
 import org.junit.Test;
-import org.kordamp.naum.model.AnnotationInfo;
 import org.kordamp.naum.model.ClassInfo;
 import org.kordamp.naum.model.ConstructorInfo;
+import org.kordamp.naum.model.EnumValue;
 import org.kordamp.naum.model.Modifiers;
 import org.kordamp.naum.processor.AbstractProcessorTest;
 
 import javax.inject.Named;
 import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static java.util.Arrays.asList;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.kordamp.naum.model.AnnotationInfo.annotationInfo;
+import static org.kordamp.naum.model.AnnotationValue.newArrayValue;
+import static org.kordamp.naum.model.AnnotationValue.newEnumValue;
 import static org.kordamp.naum.model.ClassInfo.classInfo;
 import static org.kordamp.naum.model.ClassInfo.newEnum;
 import static org.kordamp.naum.model.ClassInfo.newInterface;
@@ -221,11 +225,14 @@ public class ClassTest extends AbstractProcessorTest {
             .build();
         classInfo.addToAnnotations(annotationInfo()
             .name(Retention.class.getName())
-            .enumValue("value", new AnnotationInfo.EnumEntry(RetentionPolicy.class.getName(), "SOURCE"))
+            .annotationValue("value", new EnumValue(RetentionPolicy.class.getName(), "SOURCE"))
             .build());
         classInfo.addToAnnotations(annotationInfo()
             .name(Target.class.getName())
-            //.value("value", new ElementType[]{ElementType.TYPE, ElementType.FIELD})
+            .annotationValue("value", newArrayValue(asList(
+                    newEnumValue(ElementType.class.getName(), ElementType.TYPE.name()),
+                    newEnumValue(ElementType.class.getName(), ElementType.FIELD.name()))
+            ))
             .build());
         loadAndCheck("org/kordamp/naum/processor/klass/AnnotatedAnnotation.class", (klass) -> {
             assertThat(klass.getContentHash(), equalTo(classInfo.getContentHash()));

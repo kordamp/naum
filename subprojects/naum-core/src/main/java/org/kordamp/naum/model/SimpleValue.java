@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.naum.diff;
 
-import org.kordamp.naum.model.NamedInfo;
+package org.kordamp.naum.model;
 
-import java.util.Collection;
+import lombok.Data;
 
 /**
- * @author Andres Almiray
+ * @author Stephan Classen
+ * @author Vitaly Tsaplin
+ * @author Alexey Dubrovskiy
  */
-public interface Differ<T extends NamedInfo> {
-    T getPrevious();
+@Data
+public class SimpleValue implements AnnotationValue {
+    private final String type;
+    private final Object value;
 
-    T getNext();
-
-    Collection<Diff> diff();
-
-    default String getElementName() {
-        return getPrevious().getName();
+    @Override
+    public String getValueAsString() {
+        return value.toString();
     }
 }

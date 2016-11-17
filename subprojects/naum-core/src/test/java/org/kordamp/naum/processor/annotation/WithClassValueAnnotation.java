@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.naum.diff;
 
-import org.kordamp.naum.model.NamedInfo;
-
-import java.util.Collection;
+package org.kordamp.naum.processor.annotation;
 
 /**
- * @author Andres Almiray
+ * @author Stephan Classen
  */
-public interface Differ<T extends NamedInfo> {
-    T getPrevious();
+@WithClassValueAnnotation.DefaultClassValueAnnotation
+@WithClassValueAnnotation.CustomClassValueAnnotation(Exception.class)
+@WithClassValueAnnotation.CustomArrayClassValueAnnotation(Exception[].class)
+class WithClassValueAnnotation {
 
-    T getNext();
+    @interface DefaultClassValueAnnotation {
+        Class value() default Object.class;
+    }
 
-    Collection<Diff> diff();
+    @interface CustomClassValueAnnotation {
+        Class value();
+    }
 
-    default String getElementName() {
-        return getPrevious().getName();
+    @interface CustomArrayClassValueAnnotation {
+        Class value();
     }
 }
