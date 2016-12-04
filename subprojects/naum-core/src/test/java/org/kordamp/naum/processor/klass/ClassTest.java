@@ -56,72 +56,72 @@ import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 public class ClassTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckPlainClass() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/klass/PlainClass.class", (klass) -> {
-            assertThat(klass, equalTo(classInfoFor("org.kordamp.naum.processor.klass.PlainClass")));
+        loadAndCheck(PlainClass.class, (klass) -> {
+            assertThat(klass, equalTo(classInfoFor(PlainClass.class)));
         });
     }
 
     @Test
     public void loadAndCheckPlainClassWithInterface() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/klass/PlainClassWithInterface.class", (klass) -> {
-            assertThat(klass, equalTo(iclassInfoFor("org.kordamp.naum.processor.klass.PlainClassWithInterface", "java.io.Serializable")));
+        loadAndCheck(PlainClassWithInterface.class, (klass) -> {
+            assertThat(klass, equalTo(iclassInfoFor(PlainClassWithInterface.class, "java.io.Serializable")));
         });
     }
 
     @Test
     public void loadAndCheckPlainClassWithSuper() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/klass/PlainClassWithSuper.class", (klass) -> {
-            assertThat(klass, equalTo(sclassInfoFor("org.kordamp.naum.processor.klass.PlainClassWithSuper", "org.kordamp.naum.processor.klass.PlainSuper")));
+        loadAndCheck(PlainClassWithSuper.class, (klass) -> {
+            assertThat(klass, equalTo(sclassInfoFor(PlainClassWithSuper.class, "org.kordamp.naum.processor.klass.PlainSuper")));
         });
     }
 
     @Test
     public void loadAndCheckPlainClassWithSuperAndInterface() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/klass/PlainClassWithSuperAndInterface.class", (klass) -> {
-            assertThat(klass, equalTo(siclassInfoFor("org.kordamp.naum.processor.klass.PlainClassWithSuperAndInterface", "org.kordamp.naum.processor.klass.PlainSuper", "java.io.Serializable")));
+        loadAndCheck(PlainClassWithSuperAndInterface.class, (klass) -> {
+            assertThat(klass, equalTo(siclassInfoFor(PlainClassWithSuperAndInterface.class, "org.kordamp.naum.processor.klass.PlainSuper", "java.io.Serializable")));
         });
     }
 
     @Test
     public void loadAndCheckTypedClass() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/klass/TypedClass.class", (klass) -> {
-            assertThat(klass, equalTo(typedClassInfoFor("org.kordamp.naum.processor.klass.TypedClass", "<T>")));
+        loadAndCheck(TypedClass.class, (klass) -> {
+            assertThat(klass, equalTo(typedClassInfoFor(TypedClass.class, "<T>")));
         });
     }
 
     @Test
     public void loadAndCheckTypedClassWithBound() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/klass/TypedClassWithBound.class", (klass) -> {
-            assertThat(klass, equalTo(typedClassInfoFor("org.kordamp.naum.processor.klass.TypedClassWithBound", "<T extends java.lang.Number>")));
+        loadAndCheck(TypedClassWithBound.class, (klass) -> {
+            assertThat(klass, equalTo(typedClassInfoFor(TypedClassWithBound.class, "<T extends java.lang.Number>")));
         });
     }
 
     @Test
     public void loadAndCheckClassWithAnnotation() throws Exception {
-        ClassInfo classInfo = classInfoFor("org.kordamp.naum.processor.klass.ClassWithAnnotation");
+        ClassInfo classInfo = classInfoFor(ClassWithAnnotation.class);
         classInfo.addToAnnotations(annotationInfo()
             .name("javax.inject.Named")
             .build());
-        loadAndCheck("org/kordamp/naum/processor/klass/ClassWithAnnotation.class", (klass) -> {
+        loadAndCheck(ClassWithAnnotation.class, (klass) -> {
             assertThat(klass, equalTo(classInfo));
         });
     }
 
     @Test
     public void loadAndCheckClassWithAnnotationValue() throws Exception {
-        ClassInfo classInfo = classInfoFor("org.kordamp.naum.processor.klass.ClassWithAnnotationValue");
+        ClassInfo classInfo = classInfoFor(ClassWithAnnotationValue.class);
         classInfo.addToAnnotations(annotationInfo()
             .name("javax.inject.Named")
             .value("value", "value")
             .build());
-        loadAndCheck("org/kordamp/naum/processor/klass/ClassWithAnnotationValue.class", (klass) -> {
+        loadAndCheck(ClassWithAnnotationValue.class, (klass) -> {
             assertThat(klass, equalTo(classInfo));
         });
     }
 
     @Test
     public void loadAndCheckClassWithInnerClasses() throws Exception {
-        ClassInfo classInfo = classInfoFor("org.kordamp.naum.processor.klass.ClassWithInnerClasses");
+        ClassInfo classInfo = classInfoFor(ClassWithInnerClasses.class);
         classInfo.addToClasses(innerClassInfo()
             .name("org.kordamp.naum.processor.klass.ClassWithInnerClasses$StaticMemberClass")
             .modifiers(ACC_PUBLIC | ACC_STATIC)
@@ -140,7 +140,7 @@ public class ClassTest extends AbstractProcessorTest {
             .name("method")
             .modifiers(ACC_PUBLIC)
             .build());
-        loadAndCheck("org/kordamp/naum/processor/klass/ClassWithInnerClasses.class", (klass) -> {
+        loadAndCheck(ClassWithInnerClasses.class, (klass) -> {
             assertThat(klass, equalTo(classInfo));
         });
     }
@@ -162,7 +162,7 @@ public class ClassTest extends AbstractProcessorTest {
             .name("default_method")
             .modifiers(ACC_PUBLIC | ACC_DEFAULT)
             .build());
-        loadAndCheck("org/kordamp/naum/processor/klass/Interface.class", (klass) -> {
+        loadAndCheck(Interface.class, (klass) -> {
             assertTrue("Class " + klass.getName() + " should be an interface", klass.isInterface());
             assertThat(klass, equalTo(classInfo));
         });
@@ -170,7 +170,7 @@ public class ClassTest extends AbstractProcessorTest {
 
     @Test
     public void loadAndCheckClassWithConstructors() throws Exception {
-        ClassInfo classInfo = classInfoBuilderFor("org.kordamp.naum.processor.klass.ClassWithConstructors")
+        ClassInfo classInfo = classInfoBuilderFor(ClassWithConstructors.class)
             .modifiers(ACC_PUBLIC | ACC_SUPER)
             .build();
         classInfo.addToConstructors(constructorInfo()
@@ -201,7 +201,7 @@ public class ClassTest extends AbstractProcessorTest {
             .name(Named.class.getName())
             .build());
         classInfo.addToConstructors(constructor);
-        loadAndCheck("org/kordamp/naum/processor/klass/ClassWithConstructors.class", (klass) -> {
+        loadAndCheck(ClassWithConstructors.class, (klass) -> {
             assertThat(klass, equalTo(classInfo));
         });
     }
@@ -212,7 +212,7 @@ public class ClassTest extends AbstractProcessorTest {
             .name("org.kordamp.naum.processor.klass.PlainAnnotation")
             .iface(Annotation.class.getName())
             .build();
-        loadAndCheck("org/kordamp/naum/processor/klass/PlainAnnotation.class", (klass) -> {
+        loadAndCheck(PlainAnnotation.class, (klass) -> {
             assertThat(klass, equalTo(classInfo));
         });
     }
@@ -234,7 +234,7 @@ public class ClassTest extends AbstractProcessorTest {
                     newEnumValue(ElementType.class.getName(), ElementType.FIELD.name()))
             ))
             .build());
-        loadAndCheck("org/kordamp/naum/processor/klass/AnnotatedAnnotation.class", (klass) -> {
+        loadAndCheck(AnnotatedAnnotation.class, (klass) -> {
             assertThat(klass.getContentHash(), equalTo(classInfo.getContentHash()));
             assertThat(klass, equalTo(classInfo));
         });
@@ -242,23 +242,23 @@ public class ClassTest extends AbstractProcessorTest {
 
     @Test
     public void loadAndCheckPlainEnum() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/klass/PlainEnum.class", (klass) -> {
+        loadAndCheck(PlainEnum.class, (klass) -> {
             klass.getFields().forEach(f -> System.out.println(Modifiers.modifiersAsString(f.getModifiers())));
-            assertThat(klass, equalTo(enumFor("org.kordamp.naum.processor.klass.PlainEnum", "ONE", "TWO")));
+            assertThat(klass, equalTo(enumFor(PlainEnum.class, "ONE", "TWO")));
         });
     }
 
-    private static ClassInfo.ClassInfoBuilder classInfoBuilderFor(String className) {
+    private static ClassInfo.ClassInfoBuilder classInfoBuilderFor(Class<?> clazz) {
         return classInfo()
-            .name(className)
+            .name(clazz.getName())
             .superclass(Object.class.getName())
             .version(V1_8)
             .modifiers(ACC_PUBLIC | ACC_SUPER);
     }
 
-    private static ClassInfo enumFor(String className, String... fieldNames) {
+    private static ClassInfo enumFor(Class<?> clazz, String... fieldNames) {
         ClassInfo classInfo = newEnum()
-            .name(className)
+            .name(clazz.getName())
             .build();
         classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PRIVATE)
@@ -267,7 +267,7 @@ public class ClassTest extends AbstractProcessorTest {
             classInfo.addToFields(
                 fieldInfo()
                     .name(fieldName)
-                    .type(className)
+                    .type(clazz.getName())
                     .modifiers(ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_ENUM)
                     .build()
             );
@@ -275,27 +275,27 @@ public class ClassTest extends AbstractProcessorTest {
         classInfo.addToMethods(methodInfo()
             .name("valueOf")
             .modifiers(ACC_PUBLIC | ACC_STATIC)
-            .returnType(className)
+            .returnType(clazz.getName())
             .argumentTypes("java.lang.String")
             .build());
         classInfo.addToMethods(methodInfo()
             .name("values")
             .modifiers(ACC_PUBLIC | ACC_STATIC)
-            .returnType(className + "[]")
+            .returnType(clazz.getName() + "[]")
             .build());
         return classInfo;
     }
 
-    private static ClassInfo classInfoFor(String className) {
-        ClassInfo classInfo = classInfoBuilderFor(className).build();
+    private static ClassInfo classInfoFor(Class<?> clazz) {
+        ClassInfo classInfo = classInfoBuilderFor(clazz).build();
         classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());
         return classInfo;
     }
 
-    private static ClassInfo iclassInfoFor(String className, String... interfaces) {
-        ClassInfo classInfo = classInfoBuilderFor(className)
+    private static ClassInfo iclassInfoFor(Class<?> clazz, String... interfaces) {
+        ClassInfo classInfo = classInfoBuilderFor(clazz)
             .interfaces(interfaces)
             .build();
         classInfo.addToConstructors(constructorInfo()
@@ -304,8 +304,8 @@ public class ClassTest extends AbstractProcessorTest {
         return classInfo;
     }
 
-    private static ClassInfo sclassInfoFor(String className, String superclass) {
-        ClassInfo classInfo = classInfoBuilderFor(className)
+    private static ClassInfo sclassInfoFor(Class<?> clazz, String superclass) {
+        ClassInfo classInfo = classInfoBuilderFor(clazz)
             .superclass(superclass)
             .build();
         classInfo.addToConstructors(constructorInfo()
@@ -314,8 +314,8 @@ public class ClassTest extends AbstractProcessorTest {
         return classInfo;
     }
 
-    private static ClassInfo siclassInfoFor(String className, String superclass, String... interfaces) {
-        ClassInfo classInfo = classInfoBuilderFor(className)
+    private static ClassInfo siclassInfoFor(Class<?> clazz, String superclass, String... interfaces) {
+        ClassInfo classInfo = classInfoBuilderFor(clazz)
             .superclass(superclass)
             .interfaces(interfaces)
             .build();
@@ -325,8 +325,8 @@ public class ClassTest extends AbstractProcessorTest {
         return classInfo;
     }
 
-    private static ClassInfo typedClassInfoFor(String className, String formalParameters) {
-        ClassInfo classInfo = classInfoBuilderFor(className)
+    private static ClassInfo typedClassInfoFor(Class<?> clazz, String formalParameters) {
+        ClassInfo classInfo = classInfoBuilderFor(clazz)
             .typeParameters(formalParameters)
             .build();
         classInfo.addToConstructors(constructorInfo()

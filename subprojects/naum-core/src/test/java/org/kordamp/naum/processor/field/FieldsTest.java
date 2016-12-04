@@ -40,57 +40,57 @@ import static org.objectweb.asm.Opcodes.ACC_SUPER;
 public class FieldsTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckPublicPrimitiveFieldsClass() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/field/PublicPrimitiveFieldsClass.class", (klass) -> {
-            assertThat(klass, equalTo(classInfoFor("org.kordamp.naum.processor.field.PublicPrimitiveFieldsClass", fields(Integer.TYPE, ACC_PUBLIC))));
+        loadAndCheck(PublicPrimitiveFieldsClass.class, (klass) -> {
+            assertThat(klass, equalTo(classInfoFor(PublicPrimitiveFieldsClass.class, fields(Integer.TYPE, ACC_PUBLIC))));
         });
     }
 
     @Test
     public void loadAndCheckPublicReferenceFieldsClass() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/field/PublicReferenceFieldsClass.class", (klass) -> {
-            assertThat(klass, equalTo(classInfoFor("org.kordamp.naum.processor.field.PublicReferenceFieldsClass", fields(Integer.class, ACC_PUBLIC))));
+        loadAndCheck(PublicReferenceFieldsClass.class, (klass) -> {
+            assertThat(klass, equalTo(classInfoFor(PublicReferenceFieldsClass.class, fields(Integer.class, ACC_PUBLIC))));
         });
     }
 
     @Test
     public void loadAndCheckProtectedPrimitiveFieldsClass() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/field/ProtectedPrimitiveFieldsClass.class", (klass) -> {
-            assertThat(klass, equalTo(classInfoFor("org.kordamp.naum.processor.field.ProtectedPrimitiveFieldsClass", fields(Integer.TYPE, ACC_PROTECTED))));
+        loadAndCheck(ProtectedPrimitiveFieldsClass.class, (klass) -> {
+            assertThat(klass, equalTo(classInfoFor(ProtectedPrimitiveFieldsClass.class, fields(Integer.TYPE, ACC_PROTECTED))));
         });
     }
 
     @Test
     public void loadAndCheckProtectedReferenceFieldsClass() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/field/ProtectedReferenceFieldsClass.class", (klass) -> {
-            assertThat(klass, equalTo(classInfoFor("org.kordamp.naum.processor.field.ProtectedReferenceFieldsClass", fields(Integer.class, ACC_PROTECTED))));
+        loadAndCheck(ProtectedReferenceFieldsClass.class, (klass) -> {
+            assertThat(klass, equalTo(classInfoFor(ProtectedReferenceFieldsClass.class, fields(Integer.class, ACC_PROTECTED))));
         });
     }
 
     @Test
     public void loadAndCheckPrivatePrimitiveFieldsClass() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/field/PrivatePrimitiveFieldsClass.class", (klass) -> {
-            assertThat(klass, equalTo(classInfoFor("org.kordamp.naum.processor.field.PrivatePrimitiveFieldsClass", fields(Integer.TYPE, ACC_PRIVATE))));
+        loadAndCheck(PrivatePrimitiveFieldsClass.class, (klass) -> {
+            assertThat(klass, equalTo(classInfoFor(PrivatePrimitiveFieldsClass.class, fields(Integer.TYPE, ACC_PRIVATE))));
         });
     }
 
     @Test
     public void loadAndCheckPrivateReferenceFieldsClass() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/field/PrivateReferenceFieldsClass.class", (klass) -> {
-            assertThat(klass, equalTo(classInfoFor("org.kordamp.naum.processor.field.PrivateReferenceFieldsClass", fields(Integer.class, ACC_PRIVATE))));
+        loadAndCheck(PrivateReferenceFieldsClass.class, (klass) -> {
+            assertThat(klass, equalTo(classInfoFor(PrivateReferenceFieldsClass.class, fields(Integer.class, ACC_PRIVATE))));
         });
     }
 
     @Test
     public void loadAndCheckPackagePrimitiveFieldsClass() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/field/PackagePrimitiveFieldsClass.class", (klass) -> {
-            assertThat(klass, equalTo(classInfoFor("org.kordamp.naum.processor.field.PackagePrimitiveFieldsClass", fields(Integer.TYPE, 0))));
+        loadAndCheck(PackagePrimitiveFieldsClass.class, (klass) -> {
+            assertThat(klass, equalTo(classInfoFor(PackagePrimitiveFieldsClass.class, fields(Integer.TYPE, 0))));
         });
     }
 
     @Test
     public void loadAndCheckPackageReferenceFieldsClass() throws Exception {
-        loadAndCheck("org/kordamp/naum/processor/field/PackageReferenceFieldsClass.class", (klass) -> {
-            assertThat(klass, equalTo(classInfoFor("org.kordamp.naum.processor.field.PackageReferenceFieldsClass", fields(Integer.class, 0))));
+        loadAndCheck(PackageReferenceFieldsClass.class, (klass) -> {
+            assertThat(klass, equalTo(classInfoFor(PackageReferenceFieldsClass.class, fields(Integer.class, 0))));
         });
     }
 
@@ -118,7 +118,7 @@ public class FieldsTest extends AbstractProcessorTest {
             .modifiers(ACC_PUBLIC)
             .build());
 
-        ClassInfo classInfo = classInfoBuilderFor("org.kordamp.naum.processor.field.FieldsWithGenerics")
+        ClassInfo classInfo = classInfoBuilderFor(FieldsWithGenerics.class)
             .typeParameters("<A extends java.lang.Number>")
             .build();
         classInfo.addToConstructors(constructorInfo()
@@ -128,7 +128,7 @@ public class FieldsTest extends AbstractProcessorTest {
             classInfo.addToFields(field);
         }
 
-        loadAndCheck("org/kordamp/naum/processor/field/FieldsWithGenerics.class", (klass) -> {
+        loadAndCheck(FieldsWithGenerics.class, (klass) -> {
             assertThat(klass, equalTo(classInfo));
         });
     }
@@ -156,7 +156,7 @@ public class FieldsTest extends AbstractProcessorTest {
             .build());
         fields.add(field);
 
-        ClassInfo classInfo = classInfoBuilderFor("org.kordamp.naum.processor.field.FieldsWithAnnotations").build();
+        ClassInfo classInfo = classInfoBuilderFor(FieldsWithAnnotations.class).build();
         classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());/*nm─*/
@@ -164,21 +164,21 @@ public class FieldsTest extends AbstractProcessorTest {
             classInfo.addToFields(f);
         }
 
-        loadAndCheck("org/kordamp/naum/processor/field/FieldsWithAnnotations.class", (klass) -> {
+        loadAndCheck(FieldsWithAnnotations.class, (klass) -> {
             assertThat(klass, equalTo(classInfo));
         });
     }
 
-    private static ClassInfo.ClassInfoBuilder classInfoBuilderFor(String className) {
+    private static ClassInfo.ClassInfoBuilder classInfoBuilderFor(Class<?> clazz) {
         return classInfo()
-            .name(className)
+            .name(clazz.getName())
             .superclass(Object.class.getName())
             .version(Opcodes.V1_8)
             .modifiers(ACC_PUBLIC | ACC_SUPER);
     }
 
-    private static ClassInfo classInfoFor(String className, List<FieldInfo> fields) {
-        ClassInfo classInfo = classInfoBuilderFor(className).build();
+    private static ClassInfo classInfoFor(Class<?> clazz, List<FieldInfo> fields) {
+        ClassInfo classInfo = classInfoBuilderFor(clazz).build();
         classInfo.addToConstructors(constructorInfo()
             .modifiers(ACC_PUBLIC)
             .build());

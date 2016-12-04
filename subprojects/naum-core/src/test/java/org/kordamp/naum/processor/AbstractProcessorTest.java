@@ -19,19 +19,26 @@ import org.kordamp.naum.model.ClassInfo;
 import org.objectweb.asm.ClassReader;
 
 import java.io.InputStream;
+import java.util.List;
 
 public class AbstractProcessorTest {
     public interface Checks {
         void check(ClassInfo klass);
     }
 
-    protected void loadAndCheck(String targetClassPath, Checks checks) throws Exception {
-        InputStream stream = AbstractProcessorTest.class.getClassLoader().getResourceAsStream(targetClassPath);
-        ClassReader classReader = new ClassReader(stream);
-        ClassProcessor classProcessor = new ClassProcessor();
-        classReader.accept(classProcessor, ClassReader.SKIP_CODE);
-        for (ClassInfo klass : classProcessor.getClasses()) {
+    protected void loadAndCheck(Class<?> clazz, Checks checks) throws Exception {
+        for (ClassInfo klass : visitClassFile(clazz)) {
             checks.check(klass);
         }
+    }
+
+    private List<ClassInfo> visitClassFile(Class<?> clazz) throws Exception {
+        final String targetClassPath = clazz.getCanonicalName().replaceAll("\\.", "/") + ".class";
+        final InputStream stream = AbstractProcessorTest.class.getClassLoader().getResourceAsStream(targetClassPath);
+        final ClassReader classReader = new ClassReader(stream);
+        final ClassProcessor classProcessor = new ClassProcessor();
+
+        classReader.accept(classProcessor, ClassReader.SKIP_CODE);
+        return classProcessor.getClasses();
     }
 }

@@ -325,8 +325,7 @@ public class AnnotationTest extends AbstractProcessorTest {
     }
 
     private void loadAndCheckAnnotations(Class<?> clazz, AnnotationChecks checks) throws Exception {
-        final String targetClassPath = clazz.getCanonicalName().replaceAll("\\.", "/");
-        loadAndCheck(targetClassPath + ".class", (klass) -> {
+        loadAndCheck(clazz, (klass) -> {
             checks.check(klass.getAnnotations());
         });
     }
