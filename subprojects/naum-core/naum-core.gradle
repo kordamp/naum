@@ -1,9 +1,14 @@
+apply plugin: 'net.ltgt.apt'
+
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.16.12'
-    
-    compile 'org.ow2.asm:asm-all:5.1'
-    compile 'com.google.code.findbugs:jsr305:3.0.1'
-    compile 'org.apache.commons:commons-collections4:4.1'
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    compileOnly "com.google.auto.value:auto-value:$autovalueVersion"
+    apt "org.projectlombok:lombok:$lombokVersion"
+    apt "com.google.auto.value:auto-value:$autovalueVersion"
+
+    compile "org.ow2.asm:asm-all:$asmVersion"
+    compile "com.google.code.findbugs:jsr305:$jsr305Version"
+    compile "org.apache.commons:commons-collections4:$collectionsVersion"
 
     testCompile 'javax.inject:javax.inject:1'
 }
