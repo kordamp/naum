@@ -2,9 +2,7 @@ apply plugin: 'net.ltgt.apt'
 
 dependencies {
     compileOnly "org.projectlombok:lombok:$lombokVersion"
-    compileOnly "com.google.auto.value:auto-value:$autovalueVersion"
     apt "org.projectlombok:lombok:$lombokVersion"
-    apt "com.google.auto.value:auto-value:$autovalueVersion"
 
     compile "org.ow2.asm:asm-all:$asmVersion"
     compile "com.google.code.findbugs:jsr305:$jsr305Version"
