@@ -17,7 +17,12 @@ package org.kordamp.naum;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.kordamp.naum.model.NamedInfo;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Stephan Classen
@@ -30,6 +35,10 @@ public class NamedInfoMatcher<S extends NamedInfo<S>> extends BaseMatcher<S> {
         }
 
         return new NamedInfoMatcher<>(expected);
+    }
+
+    public static <T extends NamedInfo<T>> List<Matcher<? super T>> asMatchers(List<? extends T> infos) {
+        return infos.stream().map(NamedInfoMatcher::namedInfo).collect(toList());
     }
 
     private final NamedInfo<?> expected;
