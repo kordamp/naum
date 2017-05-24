@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.kordamp.naum.model.ClassInfo;
 import org.kordamp.naum.model.ConstructorInfo;
 import org.kordamp.naum.model.EnumValue;
-import org.kordamp.naum.model.Modifiers;
 import org.kordamp.naum.processor.AbstractProcessorTest;
 
 import javax.inject.Named;
@@ -243,7 +242,6 @@ public class ClassTest extends AbstractProcessorTest {
     @Test
     public void loadAndCheckPlainEnum() throws Exception {
         loadAndCheck("org/kordamp/naum/processor/klass/PlainEnum.class", (klass) -> {
-            klass.getFields().forEach(f -> System.out.println(Modifiers.modifiersAsString(f.getModifiers())));
             assertThat(klass, equalTo(enumFor("org.kordamp.naum.processor.klass.PlainEnum", "ONE", "TWO")));
         });
     }

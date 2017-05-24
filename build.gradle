@@ -10,14 +10,15 @@ buildscript {
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath 'org.ajoberstar:gradle-git:1.3.0'
+        classpath 'org.ajoberstar:gradle-git:1.7.1'
         classpath 'org.kordamp.gradle:stats-gradle-plugin:0.2.0'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
         classpath 'net.nemerosa:versioning:2.6.0'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
         classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.11'
-        classpath 'net.nemerosa:versioning:2.5.0'
         classpath 'net.ltgt.gradle:gradle-apt-plugin:0.9'
+        classpath 'gradle.plugin.net.ossindex:ossindex-gradle-plugin:0.1.1'
+        classpath 'org.kordamp.gradle:jdeps-gradle-plugin:0.1.0'
     }
 }
 
@@ -53,10 +54,30 @@ allprojects {
     jacoco {
         toolVersion = jacocoVersion
     }
+
+    dependencyUpdates.resolutionStrategy = {
+        componentSelection { rules ->
+            rules.all { selection ->
+                boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
+                    selection.candidate.version ==~ /(?i).*[.-]${qualifier.toLowerCase()}[.\d-]*/
+                }
+                if (rejected) {
+                    selection.reject('Release candidate')
+                }
+            }
+        }
+    }
 }
 
 subprojects { subproj ->
     apply plugin: 'java'
+    apply plugin: 'net.ossindex.audit'
+    apply plugin: 'org.kordamp.jdeps'
+
+    audit {
+        failOnError = false
+    }
+
     tasks.withType(JavaCompile) {
         sourceCompatibility = rootProject.sourceCompatibility
         targetCompatibility = rootProject.targetCompatibility
