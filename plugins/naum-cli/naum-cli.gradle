@@ -1,0 +1,118 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2016-2023 The Naum authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+plugins {
+    id 'application'
+    id 'org.jreleaser.jdks'
+}
+
+application {
+    applicationName = 'naum'
+    mainModule = 'org.kordamp.naum.cli'
+    mainClass = 'org.kordamp.naum.cli.Main'
+}
+
+jar {
+    manifest {
+        attributes('Main-Class': 'org.kordamp.naum.cli.Main')
+    }
+}
+
+config {
+    info {
+        bytecodeVersion = 11
+        specification { enabled = true }
+    }
+}
+
+dependencies {
+    api project(':naum-core')
+    annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
+    api "info.picocli:picocli:$picocliVersion"
+}
+
+processResources {
+    inputs.property('version', project.version)
+    filesMatching(['**/Banner*.properties']) {
+        expand(
+            'version': project.version,
+            'id': 'naum',
+            'name': 'naum'
+        )
+    }
+}
+
+distributions {
+    main {
+        contents {
+            from('../..') {
+                include 'VERSION'
+            }
+        }
+    }
+}
+
+jdks {
+    zulu19Linux {
+        platform = 'linux-x86_64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-linux_x64.zip'
+        checksum = '2F7A3D9EFD4126CFB19762E9642FF20576D34A2128921A0895D1F7289A852AB9'
+    }
+    zulu19LinuxArm {
+        platform = 'linux-aarch64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-linux_aarch64.tar.gz'
+        checksum = '76216EFA69E448FE487D57310372AEA0DF1CF15B82974C84A8CB0D97EB934165'
+    }
+    zulu19LinuxMusl {
+        platform = 'linux_musl-x86_64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-linux_musl_x64.tar.gz'
+        checksum = 'D425036B1DDF91DCE3D0D053FE5D3807746A9FB7271490A5AA72E8C37FAF17FB'
+    }
+    zulu19LinuxMuslArm {
+        platform = 'linux_musl-aarch64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-linux_musl_aarch64.tar.gz'
+        checksum = 'C534B402168FF345AB03DD3036BD0826BB225C518614BF6885D40F6E4E4F9ADB'
+    }
+    zulu19Windows {
+        platform = 'windows-x86_64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-win_x64.zip'
+        checksum = 'D6C768C5EC3252F936BD0562C25458F7C753C62835CA3E91166F975F7A5FE9F1'
+    }
+    // zulu19WindowsArm {
+    //     platform = 'windows-aarch64'
+    //     url = 'https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-win_aarch64.zip'
+    //     checksum = '1a9d4ab3b52ce3db7354691163e5a36979af9c37d80c3c490c12af07de21d8f3'
+    // }
+    zulu19Osx {
+        platform = 'osx-x86_64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-macosx_x64.zip'
+        checksum = '622DE3D817384DABBFFAFB7DE34D4640ADFE7F6719588112075F6A9081DCB9AC'
+    }
+    zulu19OsxArm {
+        platform = 'osx-aarch64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-macosx_aarch64.zip'
+        checksum = 'D7C845D106892C26B052828320E87DB362F4442148F1F9F56306DE58CB6025C2'
+    }
+}
+
+copyDependencies {
+    dependsOn classes
+    inputs.files(configurations.runtimeClasspath)
+    configuration = 'runtimeClasspath'
+}
+
+assemble.dependsOn copyDependencies

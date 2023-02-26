@@ -1,0 +1,176 @@
+environment:
+  properties:
+    jdkPathPrefix: 'plugins/naum-cli/build/jdks'
+    jdkFilePrefix: 'zulu19.32.13-ca-jdk19.0.2'
+
+project:
+  name: naum
+  description: Java binary compatibility checking tool
+  links:
+    homepage: https://github.com/kordamp/naum
+    faq: https://{{repoHost}}/{{repoOwner}}/{{repoName}}/discussions
+  authors:
+    - Andres Almiray
+  license: Apache-2.0
+  inceptionYear: 2022
+  stereotype: CLI
+  vendor: Kordamp
+  java:
+    groupId: org.kordamp.naum
+    version: 11
+    multiProject: true
+    mainClass: org.kordamp.naum.cli.Main
+    mainModule: org.kordamp.naum.cli
+  tags:
+    - 'java'
+    - 'compatibility'
+
+platform:
+  replacements:
+    aarch_64: aarch64
+
+release:
+  github:
+    overwrite: true
+    sign: true
+    discussionCategoryName: Announcements
+    issues:
+      enabled: true
+    changelog:
+      append:
+        enabled: true
+      formatted: ALWAYS
+      preset: conventional-commits
+      contributors:
+        format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
+      contentTemplate: 'src/jreleaser/changelog.tpl'
+      extraProperties:
+        categorizeScopes: true
+      labelers:
+        - label: 'dependencies'
+          title: 'regex:^(?:deps(?:\(.*\))?!?):\s.*'
+          order: 120
+        - label: 'allcontributors1'
+          title: 'regex:^docs: update .all-contributorsrc.*'
+          order: -1
+        - label: 'allcontributors2'
+          title: 'regex:^docs: update CONTRIBUTORS.md.*'
+          order: -2
+      categories:
+        - title: '⚙️  Dependencies'
+          key: 'dependencies'
+          order: 70
+          labels:
+            - 'dependencies'
+        - title: 'allcontributors'
+          order: 59
+          labels:
+            - 'allcontributors1'
+            - 'allcontributors2'
+      hide:
+        categories:
+          - 'merge'
+          - 'allcontributors'
+        contributors:
+          - 'GitHub'
+          - 'allcontributors'
+      replacers:
+        - search: 'deps: '
+
+signing:
+  active: ALWAYS
+  armored: true
+  files: false
+
+checksum:
+  files: false
+
+deploy:
+  maven:
+    nexus2:
+      maven-central:
+        active: RELEASE
+        url: https://s01.oss.sonatype.org/service/local
+        closeRepository: true
+        releaseRepository: true
+        stagingRepositories:
+          - build/repos/local/release
+
+announce:
+  twitter:
+    active: RELEASE
+  mastodon:
+    active: RELEASE
+    host: https://mastodon.social
+
+assemble:
+  jlink:
+    naum-standalone:
+      active: ALWAYS
+      imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
+      executable: naum
+      jdeps:
+        multiRelease: 11
+        ignoreMissingDeps: true
+      targetJdks:
+        - path: '{{jdkPathPrefix}}/zulu19Osx/{{jdkFilePrefix}}-macosx_x64/zulu-19.jdk/Contents/Home'
+          platform: 'osx-x86_64'
+        - path: '{{jdkPathPrefix}}/zulu19OsxArm/{{jdkFilePrefix}}-macosx_aarch64/zulu-19.jdk/Contents/Home'
+          platform: 'osx-aarch_64'
+        - path: '{{jdkPathPrefix}}/zulu19Linux/{{jdkFilePrefix}}-linux_x64'
+          platform: 'linux-x86_64'
+        - path: '{{jdkPathPrefix}}/zulu19LinuxArm/{{jdkFilePrefix}}-linux_aarch64'
+          platform: 'linux-aarch_64'
+        - path: '{{jdkPathPrefix}}/zulu19LinuxMusl/{{jdkFilePrefix}}-linux_musl_x64'
+          platform: 'linux_musl-x86_64'
+        - path: '{{jdkPathPrefix}}/zulu19LinuxMuslArm/{{jdkFilePrefix}}-linux_musl_aarch64'
+          platform: 'linux_musl-aarch_64'
+        - path: '{{jdkPathPrefix}}/zulu19Windows/{{jdkFilePrefix}}-win_x64'
+          platform: 'windows-x86_64'
+        #- path: '{{jdkPathPrefix}}/zulu19WindowsArm/{{jdkFilePrefix}}-win_aarch64'
+        #  platform: 'windows-aarch_64'
+      mainJar:
+        path: 'plugins/naum-cli/build/libs/naum-cli-{{projectVersion}}.jar'
+      jars:
+        - pattern: 'plugins/naum-cli/build/dependencies/flat/*.jar'
+
+distributions:
+  naum-cli:
+    jbang:
+      active: ALWAYS
+      alias: naum
+      catalog:
+        commitMessage: 'naum {{tagName}}'
+    scoop:
+      active: ALWAYS
+      bucket:
+        active: RELEASE
+        commitMessage: 'naum {{tagName}}'
+    sdkman:
+      active: RELEASE
+      candidate: naum
+      continueOnError: true
+    artifacts:
+      - path: plugins/{{distributionName}}/build/distributions/naum-{{projectVersion}}.zip
+        transform: '{{distributionName}}/naum-{{projectEffectiveVersion}}.zip'
+      - path: plugins/{{distributionName}}/build/distributions/naum-{{projectVersion}}.tar
+        transform: '{{distributionName}}/naum-{{projectEffectiveVersion}}.tar'
+
+  naum-tool-provider:
+    type: SINGLE_JAR
+    artifacts:
+      - path: plugins/{{distributionName}}/build/libs/{{distributionName}}-{{projectVersion}}.jar
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar'
+
+  naum-standalone:
+    brew:
+      active: ALWAYS
+      formulaName: naum
+      multiPlatform: true
+      tap:
+        active: RELEASE
+        commitMessage: 'naum {{tagName}}'
+
+files:
+  artifacts:
+    - path: VERSION
