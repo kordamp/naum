@@ -1,0 +1,172 @@
+name: EarlyAccess
+
+on:
+  push:
+    branches: [ master ]
+
+permissions:
+  contents: read
+  actions: write
+
+env:
+  REPO_OWNER: 'kordamp'
+  REPO_NAME: 'naum'
+  GITHUB_BOT_EMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
+
+jobs:
+  precheck:
+    name: Precheck
+    if: github.repository == 'kordamp/naum' && startsWith(github.event.head_commit.message, 'Releasing version') != true
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.vars.outputs.VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cancel previous run
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Version
+        id: vars
+        shell: bash
+        run: |
+          echo "VERSION=$(cat VERSION)" >> $GITHUB_OUTPUT
+
+  release:
+    name: Release
+    needs: [precheck]
+    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
+    runs-on: ubuntu-latest
+    outputs:
+      JAR_SIZE: ${{ steps.bach.outputs.JAR_SIZE }}
+      JAR_CSUM: ${{ steps.bach.outputs.JAR_CSUM }}
+      DOC_SIZE: ${{ steps.bach.outputs.DOC_SIZE }}
+      HASHES: ${{ steps.hash.outputs.hashes }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: ${{ vars.JAVA_DISTRO }}
+          cache: 'gradle'
+
+      - name: Build
+        run: ./gradlew -PreproducibleBuild=true build -S
+
+      - name: Assemble
+        uses: jreleaser/release-action@v2
+        with:
+          version: early-access
+          arguments: assemble
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JRELEASER_BRANCH: development
+
+      - name: Release
+        uses: jreleaser/release-action@v2
+        with:
+          version: early-access
+          arguments: full-release
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JRELEASER_BRANCH: development
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
+
+      - name: Grab bach-info
+        id: bach
+        shell: bash
+        run: |
+          JAR_SIZE=$(ls -l out/jreleaser/artifacts/naum-tool-provider/naum-tool-provider-early-access.jar | awk '{print $5}')
+          JAR_CSUM=$(shasum -a 256 out/jreleaser/artifacts/naum-tool-provider/naum-tool-provider-early-access.jar | awk '{print $1}')
+          DOC_SIZE=$(ls -l README.adoc | awk '{print $5}')
+          echo "JAR_SIZE=$(echo $JAR_SIZE)" >> $GITHUB_OUTPUT
+          echo "JAR_CSUM=$(echo $JAR_CSUM)" >> $GITHUB_OUTPUT
+          echo "DOC_SIZE=$(echo $DOC_SIZE)" >> $GITHUB_OUTPUT
+
+      - name: JReleaser release output
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: naum-release
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
+      - name: SLSA hashes
+        shell: bash
+        id: hash
+        run: |
+          echo "hashes=$(cat out/jreleaser/checksums/checksums_sha256.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
+
+#  provenance:
+#    needs: [release]
+#    permissions:
+#      actions: read
+#      id-token: write
+#      contents: write
+#    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.4.0
+#    with:
+#      base64-subjects: "${{ needs.release.outputs.HASHES }}"
+#      upload-assets: false
+#      provenance-name: 'naum-all-early-access.intoto.jsonl'
+#
+#  upload-provenance:
+#    name: Upload provenance
+#    needs: [precheck, provenance]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Download upload script
+#        run: |
+#          curl -sL https://raw.githubusercontent.com/kordamp/naum/main/.github/scripts/upload-provenance.sh --output upload-provenance.sh
+#          chmod +x upload-provenance.sh
+#
+#      - name: Download provenance
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: naum-all-early-access.intoto.jsonl
+#
+#      - name: Commit
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+#          TAG: 'early-access'
+#          PROVENANCE_FILE: 'naum-all-early-access.intoto.jsonl'
+#        run: sh upload-provenance.sh
+#
+#  update-bach-info:
+#    name: Update bach-info
+#    needs: [precheck, release]
+#    runs-on: ubuntu-latest
+#    continue-on-error: true
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#        with:
+#          repository: kordamp/bach-info
+#          ref: 'main'
+#          fetch-depth: 0
+#          token: ${{ secrets.GIT_ACCESS_TOKEN }}
+#
+#      - name: Download bach-info script
+#        run: |
+#          curl -sL https://raw.githubusercontent.com/kordamp/naum/main/.github/scripts/update-bach-info.sh --output update-bach-info.sh
+#          chmod +x update-bach-info.sh
+#
+#      - name: Commit
+#        env:
+#          TAG: "early-access"
+#          VERSION: ${{ needs.precheck.outputs.VERSION }}
+#          JAR_SIZE: ${{ needs.release.outputs.JAR_SIZE }}
+#          JAR_CSUM: ${{ needs.release.outputs.JAR_CSUM }}
+#          DOC_SIZE: ${{ needs.release.outputs.DOC_SIZE }}
+#        run: sh update-bach-info.sh
